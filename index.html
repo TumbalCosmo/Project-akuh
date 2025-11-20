@@ -1,0 +1,3363 @@
+<!doctype html>
+<html lang="id">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CosmoKita - Jelajahi Alam Semesta</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a0e27;
+      color: #ffffff;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      height: 100%;
+    }
+    
+    .stars-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+      overflow: hidden;
+    }
+    
+    .stars-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+        radial-gradient(2px 2px at 60px 70px, #fff, transparent),
+        radial-gradient(1px 1px at 50px 50px, #fff, transparent),
+        radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+        radial-gradient(2px 2px at 90px 10px, #fff, transparent);
+      background-repeat: repeat;
+      background-size: 200px 200px;
+      animation: stars 3s linear infinite;
+    }
+    
+    .planet {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: float 20s ease-in-out infinite;
+    }
+    
+    .planet-mars {
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(circle at 35% 35%, #ff6347, #8b3a3a);
+      box-shadow: 
+        inset -15px -15px 50px rgba(0,0,0,0.6),
+        0 0 80px rgba(255, 99, 71, 0.5);
+      top: 8%;
+      right: 8%;
+      animation: float 30s ease-in-out infinite;
+    }
+    
+    .planet-mars::before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: rgba(139, 58, 58, 0.6);
+      border-radius: 50%;
+      top: 30%;
+      left: 25%;
+    }
+    
+    .planet-neptune {
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle at 30% 30%, #4169e1, #000080);
+      box-shadow: 
+        inset -10px -10px 40px rgba(0,0,0,0.6),
+        0 0 60px rgba(65, 105, 225, 0.5);
+      bottom: 12%;
+      left: 5%;
+      animation: float 35s ease-in-out infinite reverse;
+    }
+    
+    .saturn-container {
+      position: absolute;
+      width: 200px;
+      height: 150px;
+      top: 45%;
+      left: 3%;
+      opacity: 0.35;
+      animation: float 40s ease-in-out infinite;
+    }
+    
+    .saturn-body {
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at 32% 32%, #f4e4c1, #daa520, #b8860b);
+      border-radius: 50%;
+      box-shadow: 
+        inset -12px -12px 50px rgba(0,0,0,0.6),
+        0 0 70px rgba(218, 165, 32, 0.4);
+      position: absolute;
+      top: 15px;
+      left: 40px;
+    }
+    
+    .saturn-body::before {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 25px;
+      background: rgba(184, 134, 11, 0.4);
+      border-radius: 50%;
+      top: 35%;
+      left: 20%;
+    }
+    
+    .saturn-ring {
+      width: 180px;
+      height: 50px;
+      border: 10px solid transparent;
+      border-color: rgba(218, 165, 32, 0.5) rgba(218, 165, 32, 0.3);
+      border-radius: 50%;
+      position: absolute;
+      top: 50px;
+      left: 10px;
+      transform: rotateX(75deg);
+      box-shadow: 
+        0 0 30px rgba(218, 165, 32, 0.3),
+        inset 0 0 20px rgba(218, 165, 32, 0.2);
+    }
+    
+    .nebula {
+      position: absolute;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(ellipse at center, 
+        rgba(138, 43, 226, 0.2) 0%,
+        rgba(75, 0, 130, 0.15) 30%,
+        transparent 70%);
+      border-radius: 50%;
+      filter: blur(50px);
+      animation: pulse 10s ease-in-out infinite;
+    }
+    
+    .nebula-1 {
+      top: 15%;
+      left: 20%;
+      background: radial-gradient(ellipse at center, 
+        rgba(138, 43, 226, 0.25) 0%,
+        rgba(147, 51, 234, 0.15) 40%,
+        transparent 70%);
+    }
+    
+    .nebula-2 {
+      bottom: 15%;
+      right: 15%;
+      background: radial-gradient(ellipse at center, 
+        rgba(255, 105, 180, 0.18) 0%,
+        rgba(138, 43, 226, 0.12) 40%,
+        transparent 70%);
+      animation: pulse 12s ease-in-out infinite reverse;
+    }
+    
+    .nebula-3 {
+      top: 50%;
+      right: 25%;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(ellipse at center, 
+        rgba(30, 144, 255, 0.15) 0%,
+        rgba(65, 105, 225, 0.1) 35%,
+        transparent 65%);
+      animation: pulse 15s ease-in-out infinite;
+    }
+    
+    .distant-galaxy {
+      position: absolute;
+      width: 120px;
+      height: 40px;
+      top: 25%;
+      right: 35%;
+      opacity: 0.2;
+      animation: float 50s ease-in-out infinite;
+    }
+    
+    .distant-galaxy::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%);
+      border-radius: 50%;
+      transform: rotate(-25deg);
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    }
+    
+    .shooting-star {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 15px 3px white;
+      animation: shoot 4s linear infinite;
+    }
+    
+    .shooting-star-1 {
+      top: 18%;
+      left: 25%;
+      animation-delay: 0s;
+    }
+    
+    .shooting-star-2 {
+      top: 55%;
+      left: 65%;
+      animation-delay: 6s;
+    }
+    
+    .shooting-star-3 {
+      top: 35%;
+      left: 45%;
+      animation-delay: 10s;
+    }
+    
+    @keyframes stars {
+      from { transform: translateY(0); }
+      to { transform: translateY(-200px); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-40px) rotate(8deg); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.15; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(1.15); }
+    }
+    
+    @keyframes shoot {
+      0% {
+        transform: translateX(0) translateY(0);
+        opacity: 1;
+      }
+      70% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(-400px) translateY(400px);
+        opacity: 0;
+      }
+    }
+    
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 14, 39, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      border-bottom: 2px solid rgba(138, 43, 226, 0.3);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    
+    .search-container {
+      position: relative;
+      display: none;
+    }
+    
+    .search-container.active {
+      display: block;
+    }
+    
+    .search-input {
+      padding: 0.6rem 2.5rem 0.6rem 1rem;
+      border: 2px solid rgba(138, 43, 226, 0.5);
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      outline: none;
+      width: 250px;
+      transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .search-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: transform 0.3s ease;
+    }
+    
+    .search-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .menu-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    
+    .menu-btn:hover {
+      transform: rotate(90deg);
+    }
+    
+    .user-profile {
+      display: none;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.5rem 1rem;
+      background: rgba(138, 43, 226, 0.2);
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .user-profile:hover {
+      background: rgba(138, 43, 226, 0.4);
+      transform: translateY(-2px);
+    }
+    
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 2px solid #667eea;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-size: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .user-avatar .avatar-face {
+      font-size: 1.3rem;
+      z-index: 3;
+    }
+    
+    .user-avatar .avatar-clothing {
+      position: absolute;
+      font-size: 1rem;
+      bottom: -2px;
+      z-index: 2;
+    }
+    
+    .user-avatar .avatar-accessory {
+      position: absolute;
+      font-size: 0.8rem;
+      top: -2px;
+      right: -2px;
+      z-index: 4;
+    }
+    
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .user-nickname {
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    
+    .user-coins {
+      font-size: 0.8rem;
+      color: #ffd700;
+    }
+    
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: -350px;
+      width: 350px;
+      height: 100%;
+      background: rgba(10, 14, 39, 0.98);
+      backdrop-filter: blur(20px);
+      padding: 5rem 2rem 2rem;
+      z-index: 999;
+      transition: right 0.4s ease;
+      border-left: 2px solid rgba(138, 43, 226, 0.3);
+      overflow-y: auto;
+    }
+    
+    .sidebar.active {
+      right: 0;
+    }
+    
+    .sidebar-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .sidebar-close:hover {
+      transform: rotate(90deg);
+      color: #667eea;
+    }
+    
+    .sidebar nav ul {
+      list-style: none;
+    }
+    
+    .sidebar nav ul li {
+      margin-bottom: 1.5rem;
+    }
+    
+    .sidebar nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-size: 1.1rem;
+      display: block;
+      padding: 0.8rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar nav ul li a:hover {
+      background: rgba(138, 43, 226, 0.3);
+      transform: translateX(10px);
+    }
+    
+    .container {
+      margin-top: 80px;
+      padding: 2rem;
+      min-height: calc(100% - 80px);
+    }
+    
+    .page {
+      display: none;
+      animation: fadeIn 0.6s ease;
+    }
+    
+    .page.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .welcome-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100% - 160px);
+      text-align: center;
+    }
+    
+    .welcome-content {
+      background: rgba(138, 43, 226, 0.1);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 500px;
+      box-shadow: 0 20px 60px rgba(138, 43, 226, 0.3);
+    }
+    
+    .welcome-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .welcome-subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: #b8b8d4;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #b8b8d4;
+      font-size: 0.9rem;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid rgba(138, 43, 226, 0.5);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    
+    .form-group input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn {
+      padding: 1rem 2.5rem;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+    }
+    
+    .btn:active {
+      transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(138, 43, 226, 0.5);
+    }
+    
+    .btn-small {
+      padding: 0.5rem 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .avatar-creator {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .avatar-title {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .avatar-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .avatar-preview {
+      background: rgba(138, 43, 226, 0.1);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 20px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .avatar-display {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 4rem;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: visible;
+    }
+    
+    .avatar-face {
+      font-size: 5rem;
+      z-index: 3;
+    }
+    
+    .avatar-clothing {
+      position: absolute;
+      font-size: 3rem;
+      bottom: 10px;
+      z-index: 2;
+    }
+    
+    .avatar-accessory {
+      position: absolute;
+      font-size: 2.5rem;
+      top: 5px;
+      right: 10px;
+      z-index: 4;
+    }
+    
+    .customization-panel {
+      background: rgba(138, 43, 226, 0.1);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 20px;
+      padding: 2rem;
+    }
+    
+    .customization-section {
+      margin-bottom: 2rem;
+    }
+    
+    .customization-section h3 {
+      margin-bottom: 1rem;
+      color: #b8b8d4;
+      font-size: 1.1rem;
+    }
+    
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 1rem;
+    }
+    
+    .item-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .item-card:hover {
+      transform: translateY(-5px);
+      border-color: #667eea;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+    
+    .item-card.selected {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.2);
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    }
+    
+    .item-card.locked {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .item-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .item-name {
+      font-size: 0.8rem;
+      color: #b8b8d4;
+    }
+    
+    .item-price {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+    }
+    
+    .avatar-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+    
+    .mode-selection-container {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .mode-card {
+      background: rgba(138, 43, 226, 0.1);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      min-height: 160px;
+    }
+    
+    .mode-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+      border-color: #667eea;
+    }
+    
+    .mode-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1.5rem;
+    }
+    
+    .mode-content {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .mode-title {
+      font-size: 1.5rem;
+      margin-bottom: 0.8rem;
+      color: #ffffff;
+      font-weight: bold;
+    }
+    
+    .mode-desc {
+      font-size: 0.95rem;
+      color: #b8b8d4;
+      line-height: 1.6;
+    }
+    
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .category-card {
+      background: rgba(138, 43, 226, 0.1);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .category-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+      border-color: #667eea;
+    }
+    
+    .category-image {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+    }
+    
+    .category-content {
+      padding: 1.5rem;
+    }
+    
+    .category-title {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+    }
+    
+    .category-desc {
+      font-size: 0.9rem;
+      color: #b8b8d4;
+      line-height: 1.5;
+    }
+    
+    .sub-objects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .sub-object-card {
+      background: rgba(138, 43, 226, 0.1);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 15px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .sub-object-card:hover {
+      transform: translateY(-5px);
+      border-color: #667eea;
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+    }
+    
+    .sub-object-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+    
+    .sub-object-name {
+      font-size: 1.1rem;
+      color: #ffffff;
+    }
+    
+    .detail-page {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .detail-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .detail-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .detail-image {
+      width: 100%;
+      height: 300px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8rem;
+      margin-bottom: 2rem;
+      border: 3px solid rgba(138, 43, 226, 0.3);
+    }
+    
+    .rotating-object-container {
+      width: 100%;
+      height: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem 0;
+      background: rgba(138, 43, 226, 0.05);
+      border-radius: 20px;
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .rotating-object {
+      width: 250px;
+      height: 250px;
+      position: relative;
+    }
+    
+    .detail-content {
+      background: rgba(138, 43, 226, 0.1);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .detail-section {
+      margin-bottom: 2rem;
+    }
+    
+    .detail-section h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #667eea;
+    }
+    
+    .detail-section p {
+      line-height: 1.8;
+      color: #b8b8d4;
+      margin-bottom: 1rem;
+    }
+    
+    .detail-data {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .data-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(138, 43, 226, 0.3);
+    }
+    
+    .data-label {
+      font-size: 0.9rem;
+      color: #b8b8d4;
+      margin-bottom: 0.5rem;
+    }
+    
+    .data-value {
+      font-size: 1.1rem;
+      color: #ffffff;
+      font-weight: bold;
+    }
+    
+    .detail-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .quiz-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    
+    .quiz-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .quiz-title {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .quiz-progress {
+      font-size: 1rem;
+      color: #b8b8d4;
+    }
+    
+    .question-card {
+      background: rgba(138, 43, 226, 0.1);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .question-text {
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      color: #ffffff;
+    }
+    
+    .options-list {
+      list-style: none;
+    }
+    
+    .option-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .option-item:hover {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.1);
+    }
+    
+    .option-item.selected {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.2);
+    }
+    
+    .option-item.correct {
+      border-color: #4ade80;
+      background: rgba(74, 222, 128, 0.2);
+    }
+    
+    .option-item.incorrect {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.2);
+    }
+    
+    .quiz-result {
+      background: rgba(138, 43, 226, 0.1);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .result-score {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .result-message {
+      font-size: 1.2rem;
+      color: #b8b8d4;
+      margin-bottom: 1.5rem;
+    }
+    
+    .quiz-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .brain-trainer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .case-card {
+      background: rgba(138, 43, 226, 0.1);
+      border: 2px solid rgba(138, 43, 226, 0.3);
+      border-radius: 20px;
+      padding: 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .case-card:hover {
+      transform: translateY(-5px);
+      border-color: #667eea;
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+    }
+    
+    .case-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #ffffff;
+    }
+    
+    .case-preview {
+      font-size: 0.95rem;
+      color: #b8b8d4;
+      line-height: 1.6;
+    }
+    
+    .case-detail {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .back-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(138, 43, 226, 0.5);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .back-btn:hover {
+      background: rgba(138, 43, 226, 0.3);
+      transform: translateX(-5px);
+    }
+    
+    .page-title {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+      10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    }
+    
+    @media (max-width: 1024px) {
+      .container {
+        padding: 1.5rem;
+      }
+      
+      .categories-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1.5rem;
+      }
+      
+      .brain-trainer-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+    }
+    
+    @media (max-width: 768px) {
+      header {
+        padding: 0.8rem 1rem;
+      }
+      
+      .logo {
+        font-size: 1.4rem;
+      }
+      
+      .container {
+        margin-top: 70px;
+        padding: 1rem;
+        min-height: calc(100% - 70px);
+      }
+      
+      .avatar-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .mode-card {
+        grid-template-columns: 1fr;
+      }
+      
+      .rotating-object-container {
+        height: 280px;
+      }
+      
+      .rotating-object {
+        width: 180px;
+        height: 180px;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="stars-bg">
+   <div class="planet planet-mars"></div>
+   <div class="planet planet-neptune"></div>
+   <div class="saturn-container">
+    <div class="saturn-body"></div>
+    <div class="saturn-ring"></div>
+   </div>
+   <div class="nebula nebula-1"></div>
+   <div class="nebula nebula-2"></div>
+   <div class="nebula nebula-3"></div>
+   <div class="distant-galaxy"></div>
+   <div class="shooting-star shooting-star-1"></div>
+   <div class="shooting-star shooting-star-2"></div>
+   <div class="shooting-star shooting-star-3"></div>
+  </div>
+  <header>
+   <div class="logo" id="siteTitle">
+    CosmoKita
+   </div>
+   <div class="header-actions" id="headerActions" style="display: none;">
+    <div class="search-container" id="searchContainer"><input type="text" class="search-input" id="searchInput" placeholder="Cari materi...">
+    </div><button class="search-btn" id="searchBtn" aria-label="Cari">🔍</button>
+    <div class="user-profile" id="userProfile">
+     <div class="user-avatar" id="headerAvatar"><span class="avatar-face">😊</span> <span class="avatar-clothing"></span> <span class="avatar-accessory"></span>
+     </div>
+     <div class="user-info">
+      <div class="user-nickname" id="headerNickname"></div>
+      <div class="user-coins" id="headerCoins">
+       💰 0 koin
+      </div>
+     </div>
+    </div><button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+   </div>
+  </header>
+  <div class="sidebar" id="sidebar"><button class="sidebar-close" id="sidebarClose" aria-label="Tutup">×</button>
+   <nav>
+    <ul>
+     <li><a href="#" data-action="mainMenu">🏠 Menu Utama</a></li>
+     <li><a href="#" data-action="editAvatar">👤 Edit Avatar</a></li>
+     <li><a href="#" data-action="logout">🚪 Keluar</a></li>
+    </ul>
+   </nav>
+  </div>
+  <main class="container">
+   <div class="page active" id="welcomePage">
+    <div class="welcome-page">
+     <div class="welcome-content">
+      <h1 class="welcome-title" id="welcomeTitle">Selamat Datang di CosmoKita</h1>
+      <p class="welcome-subtitle" id="welcomeSubtitle">Jelajahi Keajaiban Alam Semesta</p>
+      <form id="nicknameForm">
+       <div class="form-group"><label for="nicknameInput">Nickname</label> <input type="text" id="nicknameInput" placeholder="Masukkan nickname Anda" required>
+       </div><button type="submit" class="btn">Mulai Petualangan 🚀</button>
+      </form>
+     </div>
+    </div>
+   </div>
+   <div class="page" id="avatarCreatorPage">
+    <div class="avatar-creator">
+     <h2 class="avatar-title">Buat Avatar Anda</h2>
+     <div class="avatar-container">
+      <div class="avatar-preview">
+       <div class="avatar-display" id="avatarDisplay"><span class="avatar-face" id="previewFace">😊</span> <span class="avatar-clothing" id="previewClothing"></span> <span class="avatar-accessory" id="previewAccessory"></span>
+       </div>
+       <p id="currentNickname" style="font-size: 1.2rem; margin-top: 1rem;"></p>
+       <p style="color: #ffd700; margin-top: 0.5rem;">💰 <span id="currentCoins">50</span> koin</p>
+      </div>
+      <div class="customization-panel">
+       <div class="customization-section">
+        <h3>Wajah</h3>
+        <div class="items-grid" id="faceItems"></div>
+       </div>
+       <div class="customization-section">
+        <h3>Pakaian</h3>
+        <div class="items-grid" id="clothingItems"></div>
+       </div>
+       <div class="customization-section">
+        <h3>Aksesori</h3>
+        <div class="items-grid" id="accessoryItems"></div>
+       </div>
+      </div>
+     </div>
+     <div class="avatar-actions"><button class="btn" id="saveAvatarBtn">Simpan &amp; Lanjutkan</button>
+     </div>
+    </div>
+   </div>
+   <div class="page" id="mainMenuPage">
+    <h2 class="page-title">Pilih Mode Pembelajaran</h2>
+    <div class="mode-selection-container">
+     <div class="mode-card" id="mainLearningCard">
+      <div class="mode-image">
+       <svg viewbox="0 0 150 150" width="120" height="120"><defs>
+         <radialgradient id="galaxyMain" cx="50%" cy="50%">
+          <stop offset="0%" style="stop-color:#fff;stop-opacity:1" />
+          <stop offset="30%" style="stop-color:#b19cd9;stop-opacity:0.9" />
+          <stop offset="100%" style="stop-color:#6a0dad;stop-opacity:0.4" />
+         </radialgradient>
+        </defs> <ellipse cx="75" cy="75" rx="60" ry="22" fill="url(#galaxyMain)" opacity="0.9" transform="rotate(-30 75 75)" /> <ellipse cx="75" cy="75" rx="45" ry="15" fill="#fff" opacity="0.7" transform="rotate(-30 75 75)" /> <circle cx="75" cy="75" r="9" fill="#fff" />
+       </svg>
+      </div>
+      <div class="mode-content">
+       <h3 class="mode-title">Materi Utama</h3>
+       <p class="mode-desc">Pelajari planet, bintang, galaksi, lubang hitam, dan berbagai objek astronomi lainnya tanpa kuis</p>
+      </div>
+     </div>
+     <div class="mode-card" id="brainTrainerCard">
+      <div class="mode-image">
+       <svg viewbox="0 0 150 150" width="120" height="120"><defs>
+         <lineargradient id="brainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#ee5a6f;stop-opacity:1" />
+         </lineargradient>
+        </defs> <circle cx="75" cy="75" r="45" fill="url(#brainGrad)" /> <path d="M 52,67 Q 60,52 75,56 Q 90,60 98,67" stroke="#fff" stroke-width="3" fill="none" /> <path d="M 52,83 Q 60,98 75,94 Q 90,90 98,83" stroke="#fff" stroke-width="3" fill="none" /> <circle cx="64" cy="71" r="3" fill="#fff" /> <circle cx="86" cy="71" r="3" fill="#fff" />
+       </svg>
+      </div>
+      <div class="mode-content">
+       <h3 class="mode-title">Pengasah Otak</h3>
+       <p class="mode-desc">Tantang diri Anda dengan studi kasus astronomi seperti Oumuamua, 2I/Borisov, dan Paradoks Fermi</p>
+      </div>
+     </div>
+     <div class="mode-card" id="quizModeCard">
+      <div class="mode-image">
+       <svg viewbox="0 0 150 150" width="120" height="120"><defs>
+         <lineargradient id="quizGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+         </lineargradient>
+        </defs> <rect x="30" y="30" width="90" height="90" rx="11" fill="url(#quizGrad)" /> <circle cx="60" cy="60" r="6" fill="#fff" /> <circle cx="90" cy="60" r="6" fill="#fff" /> <circle cx="60" cy="90" r="6" fill="#fff" /> <path d="M 79,86 L 90,90 L 101,75" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" />
+       </svg>
+      </div>
+      <div class="mode-content">
+       <h3 class="mode-title">Materi &amp; Kuis</h3>
+       <p class="mode-desc">Pelajari materi astronomi dan langsung uji pemahaman Anda dengan kuis interaktif untuk setiap topik</p>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="page" id="learningPage"><button class="back-btn" id="backToMainMenu">← Kembali</button>
+    <h2 class="page-title" id="learningPageTitle">Kategori Pembelajaran</h2>
+    <div class="categories-grid" id="categoriesGrid"></div>
+   </div>
+   <div class="page" id="subObjectsPage"><button class="back-btn" id="backToCategories">← Kembali</button>
+    <h2 class="page-title" id="subObjectsTitle"></h2>
+    <div class="sub-objects-grid" id="subObjectsGrid"></div>
+   </div>
+   <div class="page" id="detailPage">
+    <div class="detail-page"><button class="back-btn" id="backToSubObjects">← Kembali</button>
+     <div class="detail-header">
+      <h2 class="detail-title" id="detailTitle"></h2>
+      <div id="rotatingObjectContainer"></div>
+     </div>
+     <div class="detail-content" id="detailContent"></div>
+     <div class="detail-actions" id="detailActions"><button class="btn btn-secondary" id="backToListBtn">Kembali ke Daftar</button>
+     </div>
+    </div>
+   </div>
+   <div class="page" id="quizPage">
+    <div class="quiz-container"><button class="back-btn" id="backToDetail">← Kembali</button>
+     <div class="quiz-header">
+      <h2 class="quiz-title">Kuis</h2>
+      <p class="quiz-progress" id="quizProgress"></p>
+     </div>
+     <div id="quizContent"></div>
+     <div class="quiz-actions" id="quizActions"></div>
+    </div>
+   </div>
+   <div class="page" id="brainTrainerPage"><button class="back-btn" id="backToMainFromBrain">← Kembali</button>
+    <h2 class="page-title">Pengasah Otak Astronomi</h2>
+    <div class="brain-trainer-grid" id="brainTrainerGrid"></div>
+   </div>
+   <div class="page" id="caseDetailPage">
+    <div class="case-detail"><button class="back-btn" id="backToBrainTrainer">← Kembali</button>
+     <h2 class="page-title" id="caseDetailTitle"></h2>
+     <div class="detail-content" id="caseDetailContent"></div>
+    </div>
+   </div>
+  </main>
+  <script>
+    const defaultConfig = {
+      site_title: "CosmoKita",
+      welcome_title: "Selamat Datang di CosmoKita",
+      welcome_subtitle: "Jelajahi Keajaiban Alam Semesta"
+    };
+
+    let currentMode = 'learn';
+    let userData = {
+      nickname: '',
+      selectedFace: '😊',
+      selectedClothing: null,
+      selectedAccessory: null,
+      coins: 50,
+      ownedItems: []
+    };
+
+    const avatarItems = {
+      faces: [
+        { id: 'face1', icon: '😊', name: 'Senyum', price: 0, locked: false },
+        { id: 'face2', icon: '😎', name: 'Keren', price: 0, locked: false },
+        { id: 'face3', icon: '🤓', name: 'Pintar', price: 0, locked: false },
+        { id: 'face4', icon: '🚀', name: 'Astronot', price: 50, locked: true },
+        { id: 'face5', icon: '👽', name: 'Alien', price: 75, locked: true }
+      ],
+      clothing: [
+        { id: 'cloth1', icon: '👕', name: 'Kaos', price: 0, locked: false },
+        { id: 'cloth2', icon: '🥼', name: 'Lab', price: 30, locked: true },
+        { id: 'cloth3', icon: '🦺', name: 'Vest', price: 40, locked: true },
+        { id: 'cloth4', icon: '🧥', name: 'Jaket', price: 50, locked: true }
+      ],
+      accessories: [
+        { id: 'acc1', icon: '🎒', name: 'Tas', price: 0, locked: false },
+        { id: 'acc2', icon: '🎓', name: 'Topi', price: 25, locked: true },
+        { id: 'acc3', icon: '��', name: 'Bintang', price: 35, locked: true },
+        { id: 'acc4', icon: '🔭', name: 'Teleskop', price: 60, locked: true }
+      ]
+    };
+
+    const categories = [
+      { id: 'planets', name: 'Planet', icon: 'planet', desc: 'Jelajahi planet-planet di tata surya' },
+      { id: 'stars', name: 'Bintang', icon: 'star', desc: 'Pelajari berbagai jenis bintang' },
+      { id: 'galaxies', name: 'Galaksi', icon: 'galaxy', desc: 'Kenali galaksi di alam semesta' },
+      { id: 'blackholes', name: 'Black Hole', icon: 'blackhole', desc: 'Misteri lubang hitam kosmik' },
+      { id: 'whiteholes', name: 'White Hole', icon: 'whitehole', desc: 'Fenomena white hole teoretis' },
+      { id: 'nebula', name: 'Nebula', icon: 'nebula', desc: 'Awan gas dan debu kosmik' },
+      { id: 'meteors', name: 'Meteor', icon: 'meteor', desc: 'Batu luar angkasa yang berkilau' },
+      { id: 'asteroids', name: 'Asteroid', icon: 'asteroid', desc: 'Batu ruang angkasa purba' },
+      { id: 'comets', name: 'Komet', icon: 'comet', desc: 'Bola es dan debu kosmik' },
+      { id: 'pulsars', name: 'Pulsar', icon: 'pulsar', desc: 'Bintang neutron yang berputar' },
+      { id: 'quasars', name: 'Kuasar', icon: 'quasar', desc: 'Objek paling terang di alam semesta' },
+      { id: 'exoplanets', name: 'Exoplanet', icon: 'exoplanet', desc: 'Planet di luar tata surya' }
+    ];
+
+    function generatePlanetSVG(planetId) {
+      const planets = {
+        mercury: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="mercuryGrad${planetId}" cx="35%" cy="35%">
+              <stop offset="0%" style="stop-color:#e8e8e8;stop-opacity:1" />
+              <stop offset="40%" style="stop-color:#b8b8b8;stop-opacity:1" />
+              <stop offset="70%" style="stop-color:#8a8a8a;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#5a5a5a;stop-opacity:1" />
+            </radialGradient>
+            <radialGradient id="crater1${planetId}" cx="50%" cy="50%">
+              <stop offset="0%" style="stop-color:#3a3a3a;stop-opacity:0.8" />
+              <stop offset="100%" style="stop-color:#6a6a6a;stop-opacity:0.4" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="75" fill="url(#mercuryGrad${planetId})"/>
+          <circle cx="70" cy="75" r="12" fill="url(#crater1${planetId})"/>
+          <circle cx="75" cy="77" r="5" fill="#4a4a4a" opacity="0.6"/>
+          <circle cx="130" cy="90" r="18" fill="url(#crater1${planetId})"/>
+          <circle cx="133" cy="92" r="7" fill="#4a4a4a" opacity="0.5"/>
+          <circle cx="85" cy="130" r="10" fill="url(#crater1${planetId})"/>
+          <circle cx="140" cy="120" r="8" fill="url(#crater1${planetId})"/>
+          <circle cx="60" cy="110" r="6" fill="#6a6a6a" opacity="0.7"/>
+          <circle cx="110" cy="65" r="7" fill="#6a6a6a" opacity="0.6"/>
+          <ellipse cx="100" cy="100" rx="75" ry="75" fill="none" stroke="#fff" stroke-width="0.5" opacity="0.1"/>
+        </svg>`,
+        venus: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="venusGrad${planetId}" cx="30%" cy="30%">
+              <stop offset="0%" style="stop-color:#fff9e6;stop-opacity:1" />
+              <stop offset="30%" style="stop-color:#ffd966;stop-opacity:1" />
+              <stop offset="60%" style="stop-color:#e6b84d;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#c8963e;stop-opacity:1" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="75" fill="url(#venusGrad${planetId})"/>
+          <path d="M 30,70 Q 50,65 70,72 Q 85,77 100,70" stroke="#f0d98c" stroke-width="3" fill="none" opacity="0.4"/>
+          <path d="M 40,95 Q 65,88 90,95 Q 115,102 140,95" stroke="#e5c77a" stroke-width="4" fill="none" opacity="0.5"/>
+          <path d="M 35,120 Q 60,115 85,122 Q 110,129 135,122" stroke="#f0d98c" stroke-width="3" fill="none" opacity="0.4"/>
+          <path d="M 70,50 Q 95,48 120,55" stroke="#ffe0a3" stroke-width="2" fill="none" opacity="0.3"/>
+          <ellipse cx="100" cy="100" rx="75" ry="75" fill="none" stroke="#fff" stroke-width="0.5" opacity="0.15"/>
+        </svg>`,
+        earth: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="earthGrad${planetId}" cx="35%" cy="35%">
+              <stop offset="0%" style="stop-color:#b8d9ff;stop-opacity:1" />
+              <stop offset="40%" style="stop-color:#4d9fff;stop-opacity:1" />
+              <stop offset="70%" style="stop-color:#1e7ed6;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#0d47a1;stop-opacity:1" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="75" fill="url(#earthGrad${planetId})"/>
+          <path d="M 60,55 Q 70,58 80,52 Q 88,48 98,50 L 105,58 Q 100,68 92,72 L 78,75 Q 68,70 60,65 Z" fill="#2e7d32" opacity="0.85"/>
+          <path d="M 115,70 Q 125,65 138,70 L 148,82 Q 145,95 135,98 L 120,95 Q 112,85 115,75 Z" fill="#388e3c" opacity="0.85"/>
+          <path d="M 45,95 Q 55,88 68,92 L 75,105 Q 70,115 58,118 L 45,108 Z" fill="#43a047" opacity="0.8"/>
+          <ellipse cx="130" cy="130" rx="18" ry="25" fill="#1b5e20" opacity="0.75" transform="rotate(-25 130 130)"/>
+          <circle cx="100" cy="100" r="75" fill="none" stroke="#fff" stroke-width="1" opacity="0.2"/>
+          <path d="M 50,100 Q 80,85 110,95" stroke="#fff" stroke-width="2" fill="none" opacity="0.3"/>
+        </svg>`,
+        mars: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="marsGrad${planetId}" cx="32%" cy="32%">
+              <stop offset="0%" style="stop-color:#ff9e80;stop-opacity:1" />
+              <stop offset="40%" style="stop-color:#ff6347;stop-opacity:1" />
+              <stop offset="70%" style="stop-color:#e64a19;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#b71c1c;stop-opacity:1" />
+            </radialGradient>
+            <radialGradient id="marsCrater${planetId}" cx="50%" cy="50%">
+              <stop offset="0%" style="stop-color:#8b0000;stop-opacity:0.9" />
+              <stop offset="100%" style="stop-color:#c62828;stop-opacity:0.4" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="75" fill="url(#marsGrad${planetId})"/>
+          <circle cx="75" cy="80" r="16" fill="url(#marsCrater${planetId})"/>
+          <circle cx="77" cy="82" r="8" fill="#8b0000" opacity="0.7"/>
+          <circle cx="130" cy="110" r="12" fill="url(#marsCrater${planetId})"/>
+          <circle cx="60" cy="120" r="9" fill="url(#marsCrater${planetId})"/>
+          <circle cx="110" cy="60" r="7" fill="#c62828" opacity="0.8"/>
+          <circle cx="145" cy="85" r="10" fill="url(#marsCrater${planetId})"/>
+          <ellipse cx="95" cy="125" rx="15" ry="8" fill="#a52a2a" opacity="0.6"/>
+          <path d="M 50,90 Q 65,85 80,92" stroke="#d84315" stroke-width="2" fill="none" opacity="0.5"/>
+        </svg>`,
+        jupiter: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="jupiterGrad${planetId}" cx="35%" cy="35%">
+              <stop offset="0%" style="stop-color:#fdf3e0;stop-opacity:1" />
+              <stop offset="35%" style="stop-color:#f0d9b5;stop-opacity:1" />
+              <stop offset="60%" style="stop-color:#e4a853;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#c17817;stop-opacity:1" />
+            </radialGradient>
+            <radialGradient id="greatRedSpot${planetId}" cx="40%" cy="40%">
+              <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:0.9" />
+              <stop offset="60%" style="stop-color:#d84315;stop-opacity:0.8" />
+              <stop offset="100%" style="stop-color:#8b2500;stop-opacity:0.6" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="75" fill="url(#jupiterGrad${planetId})"/>
+          <ellipse cx="100" cy="65" rx="70" ry="8" fill="#d4985f" opacity="0.7"/>
+          <ellipse cx="100" cy="80" rx="72" ry="7" fill="#c8863d" opacity="0.6"/>
+          <ellipse cx="100" cy="95" rx="71" ry="9" fill="#e6b87a" opacity="0.5"/>
+          <ellipse cx="100" cy="110" rx="70" ry="7" fill="#d4985f" opacity="0.7"/>
+          <ellipse cx="100" cy="125" rx="68" ry="8" fill="#c8863d" opacity="0.6"/>
+          <ellipse cx="100" cy="140" rx="65" ry="6" fill="#e6b87a" opacity="0.5"/>
+          <ellipse cx="115" cy="105" rx="18" ry="13" fill="url(#greatRedSpot${planetId})" transform="rotate(-15 115 105)"/>
+          <ellipse cx="100" cy="100" rx="75" ry="75" fill="none" stroke="#fff" stroke-width="0.5" opacity="0.1"/>
+        </svg>`,
+        saturn: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="saturnGrad${planetId}" cx="35%" cy="35%">
+              <stop offset="0%" style="stop-color:#fff9e6;stop-opacity:1" />
+              <stop offset="40%" style="stop-color:#ffeaa7;stop-opacity:1" />
+              <stop offset="70%" style="stop-color:#f0c674;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#d4a053;stop-opacity:1" />
+            </radialGradient>
+            <linearGradient id="ringGrad${planetId}" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#d4a866;stop-opacity:0.3" />
+              <stop offset="30%" style="stop-color:#e6c080;stop-opacity:0.8" />
+              <stop offset="50%" style="stop-color:#c8a050;stop-opacity:0.6" />
+              <stop offset="70%" style="stop-color:#e6c080;stop-opacity:0.8" />
+              <stop offset="100%" style="stop-color:#d4a866;stop-opacity:0.3" />
+            </linearGradient>
+          </defs>
+          <ellipse cx="100" cy="100" rx="100" ry="20" fill="url(#ringGrad${planetId})"/>
+          <ellipse cx="100" cy="100" rx="85" ry="16" fill="#b89050" opacity="0.4"/>
+          <ellipse cx="100" cy="100" rx="72" ry="13" fill="none" stroke="#a88040" stroke-width="1" opacity="0.5"/>
+          <circle cx="100" cy="100" r="55" fill="url(#saturnGrad${planetId})"/>
+          <ellipse cx="100" cy="85" rx="48" ry="5" fill="#e6c896" opacity="0.4"/>
+          <ellipse cx="100" cy="100" rx="50" ry="5" fill="#d4b080" opacity="0.4"/>
+          <ellipse cx="100" cy="115" rx="48" ry="5" fill="#e6c896" opacity="0.4"/>
+          <ellipse cx="100" cy="100" rx="55" ry="55" fill="none" stroke="#fff" stroke-width="0.5" opacity="0.15"/>
+        </svg>`,
+        uranus: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="uranusGrad${planetId}" cx="32%" cy="32%">
+              <stop offset="0%" style="stop-color:#d4f1f9;stop-opacity:1" />
+              <stop offset="40%" style="stop-color:#81d4fa;stop-opacity:1" />
+              <stop offset="70%" style="stop-color:#4fc3f7;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#0288d1;stop-opacity:1" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="75" fill="url(#uranusGrad${planetId})"/>
+          <ellipse cx="100" cy="90" rx="65" ry="8" fill="#9de4ff" opacity="0.3"/>
+          <ellipse cx="100" cy="110" rx="65" ry="8" fill="#5dc8f5" opacity="0.3"/>
+          <ellipse cx="100" cy="100" rx="68" ry="10" fill="#81d4fa" opacity="0.2"/>
+          <circle cx="100" cy="100" r="75" fill="none" stroke="#fff" stroke-width="1" opacity="0.2"/>
+          <ellipse cx="100" cy="100" rx="30" ry="70" fill="none" stroke="#b3e5fc" stroke-width="2" opacity="0.3"/>
+        </svg>`,
+        neptune: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="neptuneGrad${planetId}" cx="32%" cy="32%">
+              <stop offset="0%" style="stop-color:#90caf9;stop-opacity:1" />
+              <stop offset="40%" style="stop-color:#5e92f3;stop-opacity:1" />
+              <stop offset="70%" style="stop-color:#2962ff;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#0d47a1;stop-opacity:1" />
+            </radialGradient>
+            <radialGradient id="neptuneSpot${planetId}" cx="50%" cy="50%">
+              <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:0.9" />
+              <stop offset="100%" style="stop-color:#1e40af;stop-opacity:0.4" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="75" fill="url(#neptuneGrad${planetId})"/>
+          <ellipse cx="100" cy="80" rx="60" ry="7" fill="#4169e1" opacity="0.4"/>
+          <ellipse cx="100" cy="100" rx="62" ry="8" fill="#3759d6" opacity="0.4"/>
+          <ellipse cx="100" cy="120" rx="60" ry="7" fill="#4169e1" opacity="0.4"/>
+          <ellipse cx="110" cy="95" rx="15" ry="12" fill="url(#neptuneSpot${planetId})" transform="rotate(20 110 95)"/>
+          <circle cx="100" cy="100" r="75" fill="none" stroke="#fff" stroke-width="1" opacity="0.15"/>
+          <path d="M 60,70 Q 80,65 100,72" stroke="#6d9eeb" stroke-width="2" fill="none" opacity="0.5"/>
+        </svg>`
+      };
+      return planets[planetId] || '';
+    }
+
+    const subObjects = {
+      planets: [
+        { id: 'mercury', name: 'Merkurius', icon: null, svg: true },
+        { id: 'venus', name: 'Venus', icon: null, svg: true },
+        { id: 'earth', name: 'Bumi', icon: null, svg: true },
+        { id: 'mars', name: 'Mars', icon: null, svg: true },
+        { id: 'jupiter', name: 'Jupiter', icon: null, svg: true },
+        { id: 'saturn', name: 'Saturnus', icon: null, svg: true },
+        { id: 'uranus', name: 'Uranus', icon: null, svg: true },
+        { id: 'neptune', name: 'Neptunus', icon: null, svg: true }
+      ],
+      stars: [
+        { id: 'sun', name: 'Matahari', icon: '☀️' },
+        { id: 'redgiant', name: 'Raksasa Merah', icon: '🔴' },
+        { id: 'whitedwarf', name: 'Katai Putih', icon: '⚪' }
+      ],
+      galaxies: [
+        { id: 'milkyway', name: 'Bima Sakti', icon: '🌌' },
+        { id: 'andromeda', name: 'Andromeda', icon: '🌠' }
+      ],
+      blackholes: [
+        { id: 'stellar', name: 'Stellar', icon: '⚫' },
+        { id: 'supermassive', name: 'Supermasif', icon: '🕳️' }
+      ],
+      whiteholes: [
+        { id: 'theoretical', name: 'Teoretis', icon: '⚪' }
+      ],
+      nebula: [
+        { id: 'orion', name: 'Orion', icon: '☁️' },
+        { id: 'crab', name: 'Kepiting', icon: '🦀' }
+      ],
+      meteors: [
+        { id: 'leonids', name: 'Leonid', icon: '☄️' }
+      ],
+      asteroids: [
+        { id: 'ceres', name: 'Ceres', icon: '🪨' }
+      ],
+      comets: [
+        { id: 'halley', name: 'Halley', icon: '💫' }
+      ],
+      pulsars: [
+        { id: 'crab-pulsar', name: 'Crab Pulsar', icon: '📡' }
+      ],
+      quasars: [
+        { id: '3c273', name: '3C 273', icon: '💥' }
+      ],
+      exoplanets: [
+        { id: 'proxima', name: 'Proxima b', icon: '🌍' }
+      ]
+    };
+
+    function createSimpleImage(objectId) {
+      let svgContent = '';
+      let currentCategory = categories.find(c => subObjects[c.id]?.some(obj => obj.id === objectId));
+
+      if (currentCategory && currentCategory.id === 'planets' && objectId !== 'sun') {
+        svgContent = generatePlanetSVG(objectId);
+      } else if (objectId === 'sun') {
+        svgContent = `<svg viewBox="0 0 250 250" width="100%" height="100%">
+          <defs>
+            <radialGradient id="sunGrad3D" cx="50%" cy="50%">
+              <stop offset="0%" style="stop-color:#fff5e6;stop-opacity:1" />
+              <stop offset="40%" style="stop-color:#ffd700;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#ff8c00;stop-opacity:0.8" />
+            </radialGradient>
+          </defs>
+          <circle cx="125" cy="125" r="100" fill="url(#sunGrad3D)"/>
+          <circle cx="125" cy="125" r="120" fill="url(#sunGrad3D)" opacity="0.3"/>
+        </svg>`;
+      } else if (objectId === 'milkyway') {
+        svgContent = `<svg viewBox="0 0 250 250" width="100%" height="100%">
+          <defs>
+            <radialGradient id="galaxyGrad3D" cx="50%" cy="50%">
+              <stop offset="0%" style="stop-color:#fff;stop-opacity:1" />
+              <stop offset="30%" style="stop-color:#b19cd9;stop-opacity:0.8" />
+              <stop offset="100%" style="stop-color:#6a0dad;stop-opacity:0.3" />
+            </radialGradient>
+          </defs>
+          <ellipse cx="125" cy="125" rx="110" ry="40" fill="url(#galaxyGrad3D)" opacity="0.8"/>
+          <circle cx="125" cy="125" r="15" fill="#fff"/>
+        </svg>`;
+      } else if (objectId === 'stellar') {
+        svgContent = `<svg viewBox="0 0 250 250" width="100%" height="100%">
+          <defs>
+            <radialGradient id="bhGlow" cx="50%" cy="50%">
+              <stop offset="60%" style="stop-color:#000;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#8a2be2;stop-opacity:0.3" />
+            </radialGradient>
+          </defs>
+          <circle cx="125" cy="125" r="80" fill="url(#bhGlow)"/>
+          <circle cx="125" cy="125" r="50" fill="#000"/>
+        </svg>`;
+      } else if (objectId === 'halley') {
+        svgContent = `<svg viewBox="0 0 250 250" width="100%" height="100%">
+          <ellipse cx="80" cy="125" rx="100" ry="40" fill="#87ceeb" opacity="0.3"/>
+          <circle cx="150" cy="125" r="35" fill="#e0ffff"/>
+        </svg>`;
+      }
+
+      return `<div class="rotating-object-container">
+        <div class="rotating-object">
+          ${svgContent}
+        </div>
+      </div>`;
+    }
+
+    const detailData = {
+      mercury: {
+        title: 'Merkurius',
+        icon: '☿️',
+        description: 'Merkurius adalah planet terdekat dengan Matahari dan planet terkecil di tata surya kita.',
+        technicalData: {
+          'Diameter': '4.879 km',
+          'Jarak dari Matahari': '57,9 juta km',
+          'Periode Orbit': '88 hari',
+          'Massa': '3,285 �� 10²³ kg',
+          'Gravitasi': '3,7 m/s²',
+          'Suhu Permukaan': '-173°C hingga 427°C'
+        },
+        formation: 'Merkurius terbentuk sekitar 4,5 miliar tahun yang lalu dari nebula matahari. Planet ini memiliki inti besi yang sangat besar, mencakup sekitar 75% dari diameternya.',
+        discovery: 'Merkurius telah dikenal sejak zaman kuno oleh peradaban Sumeria sekitar 3000 SM. Misi Mariner 10 NASA (1974-1975) adalah pesawat ruang angkasa pertama yang mengunjungi Merkurius.',
+        characteristics: 'Merkurius memiliki eksentrisitas orbit tertinggi di antara semua planet. Planet ini tidak memiliki atmosfer yang signifikan, sehingga tidak ada cuaca. Permukaannya penuh dengan kawah akibat tumbukan meteor.',
+        facts: '1. Merkurius memiliki hari yang lebih panjang daripada tahunnya. 2. Es air ditemukan di kawah kutub Merkurius. 3. Merkurius menyusut seiring waktu karena intinya mendingin.'
+      },
+      venus: {
+        title: 'Venus',
+        icon: '♀️',
+        description: 'Venus adalah planet kedua dari Matahari dan planet terpanas di tata surya karena efek rumah kaca yang ekstrem.',
+        technicalData: {
+          'Diameter': '12.104 km',
+          'Jarak dari Matahari': '108,2 juta km',
+          'Periode Orbit': '225 hari',
+          'Massa': '4,867 × 10²⁴ kg',
+          'Gravitasi': '8,87 m/s²',
+          'Suhu Permukaan': '462°C'
+        },
+        formation: 'Venus terbentuk sekitar 4,5 miliar tahun yang lalu. Pada awalnya, Venus mungkin memiliki lautan air seperti Bumi, tetapi efek rumah kaca yang tidak terkendali menguapkan semua air.',
+        discovery: 'Venus telah dikenal sejak zaman prasejarah. Galileo Galilei adalah orang pertama yang mengamati fase Venus dengan teleskop pada 1610.',
+        characteristics: 'Venus memiliki atmosfer yang sangat tebal yang terdiri dari 96,5% karbon dioksida. Venus berotasi sangat lambat dan berlawanan arah dengan planet lain.',
+        facts: '1. Venus adalah objek alami paling terang di langit malam setelah Bulan. 2. Satu hari di Venus lebih lama daripada satu tahunnya. 3. Hujan asam sulfat turun di atmosfer atas Venus.'
+      },
+      earth: {
+        title: 'Bumi',
+        icon: '🌍',
+        description: 'Bumi adalah planet ketiga dari Matahari dan satu-satunya tempat yang diketahui memiliki kehidupan.',
+        technicalData: {
+          'Diameter': '12.742 km',
+          'Jarak dari Matahari': '149,6 juta km',
+          'Periode Orbit': '365,25 hari',
+          'Massa': '5,972 × 10²⁴ kg',
+          'Gravitasi': '9,81 m/s²',
+          'Suhu Rata-rata': '15°C'
+        },
+        formation: 'Bumi terbentuk sekitar 4,54 miliar tahun yang lalu dari disk akresi protoplanet. Kehidupan pertama muncul di Bumi sekitar 3,8 miliar tahun yang lalu.',
+        discovery: 'Bumi telah diketahui sejak zaman kuno sebagai tempat tinggal manusia. Orang Yunani kuno adalah yang pertama mengusulkan bahwa Bumi berbentuk bulat.',
+        characteristics: 'Bumi memiliki atmosfer yang kaya nitrogen dan oksigen. Sekitar 71% permukaan Bumi tertutup air. Bumi memiliki medan magnet yang kuat yang melindungi dari radiasi matahari.',
+        facts: '1. Bumi adalah planet terpadat di tata surya. 2. Gravitasi Bumi menyebabkan Bulan menjauh sekitar 3,8 cm per tahun. 3. Lebih dari 99% spesies yang pernah hidup di Bumi sekarang punah.'
+      },
+      mars: {
+        title: 'Mars',
+        icon: '♂️',
+        description: 'Mars adalah planet keempat dari Matahari, dikenal sebagai Planet Merah karena warna permukaannya yang kaya besi oksida.',
+        technicalData: {
+          'Diameter': '6.779 km',
+          'Jarak dari Matahari': '227,9 juta km',
+          'Periode Orbit': '687 hari',
+          'Massa': '6,39 × 10²³ kg',
+          'Gravitasi': '3,71 m/s²',
+          'Suhu Permukaan': '-63°C rata-rata'
+        },
+        formation: 'Mars terbentuk sekitar 4,5 miliar tahun yang lalu. Mars dulunya memiliki atmosfer yang lebih tebal dan air cair di permukaannya.',
+        discovery: 'Mars telah diamati sejak zaman kuno. Misi Mariner 4 NASA pada 1965 mengambil foto close-up pertama Mars.',
+        characteristics: 'Mars memiliki atmosfer tipis yang terdiri dari 95% karbon dioksida. Planet ini memiliki gunung berapi terbesar di tata surya (Olympus Mons). Mars memiliki dua bulan kecil: Phobos dan Deimos.',
+        facts: '1. Satu hari di Mars berlangsung 24 jam 37 menit. 2. Badai debu Mars dapat menutupi seluruh planet. 3. Rover Perseverance NASA sedang mencari tanda-tanda kehidupan mikroba purba.'
+      },
+      jupiter: {
+        title: 'Jupiter',
+        icon: '♃',
+        description: 'Jupiter adalah planet terbesar di tata surya, sebuah raksasa gas dengan massa 2,5 kali lebih besar dari semua planet lain digabungkan.',
+        technicalData: {
+          'Diameter': '139.820 km',
+          'Jarak dari Matahari': '778,5 juta km',
+          'Periode Orbit': '11,9 tahun',
+          'Massa': '1,898 × 10²⁷ kg',
+          'Gravitasi': '24,79 m/s²',
+          'Periode Rotasi': '9,9 jam'
+        },
+        formation: 'Jupiter terbentuk sekitar 4,5 miliar tahun yang lalu sebagai planet pertama di tata surya. Gravitasinya yang kuat menarik sebagian besar gas hidrogen dan helium dari nebula matahari.',
+        discovery: 'Jupiter telah dikenal sejak zaman kuno. Galileo menemukan empat bulan terbesar Jupiter pada 1610. Wahana Juno sedang mempelajari interior dan atmosfer Jupiter.',
+        characteristics: 'Jupiter memiliki komposisi mirip bintang: 90% hidrogen dan 10% helium. Great Red Spot adalah badai raksasa yang telah berlangsung setidaknya 400 tahun. Jupiter memiliki setidaknya 95 bulan.',
+        facts: '1. Jupiter berotasi lebih cepat daripada planet lain. 2. Jupiter melindungi Bumi dengan gravitasinya yang menarik komet dan asteroid. 3. Europa, bulan Jupiter, mungkin memiliki lautan di bawah permukaan esnya.'
+      },
+      saturn: {
+        title: 'Saturnus',
+        icon: '♄',
+        description: 'Saturnus adalah planet keenam dari Matahari, terkenal dengan sistem cincinnya yang spektakuler.',
+        technicalData: {
+          'Diameter': '116.460 km',
+          'Jarak dari Matahari': '1,43 miliar km',
+          'Periode Orbit': '29,5 tahun',
+          'Massa': '5,683 × 10²⁶ kg',
+          'Gravitasi': '10,44 m/s²',
+          'Periode Rotasi': '10,7 jam'
+        },
+        formation: 'Saturnus terbentuk sekitar 4,5 miliar tahun yang lalu. Cincinnya mungkin terbentuk lebih baru, mungkin dari bulan yang hancur atau komet yang terlalu dekat dengan planet.',
+        discovery: 'Saturnus telah dikenal sejak zaman kuno. Galileo adalah orang pertama yang mengamatinya dengan teleskop pada 1610. Misi Cassini-Huygens (1997-2017) melakukan studi komprehensif.',
+        characteristics: 'Saturnus memiliki kepadatan terendah dari semua planet. Cincinnya terdiri dari miliaran partikel es dan batu. Saturnus memiliki setidaknya 146 bulan, termasuk Titan yang memiliki atmosfer tebal.',
+        facts: '1. Cincin Saturnus memiliki lebar 282.000 km tetapi ketebalannya hanya sekitar 10 meter. 2. Saturnus bisa mengapung di air karena kepadatannya lebih rendah dari air. 3. Angin di Saturnus bisa mencapai 1.800 km/jam.'
+      },
+      uranus: {
+        title: 'Uranus',
+        icon: '♅',
+        description: 'Uranus adalah planet ketujuh dari Matahari, sebuah raksasa es dengan rotasi unik yang miring 98 derajat.',
+        technicalData: {
+          'Diameter': '50.724 km',
+          'Jarak dari Matahari': '2,87 miliar km',
+          'Periode Orbit': '84 tahun',
+          'Massa': '8,681 × 10²⁵ kg',
+          'Gravitasi': '8,87 m/s²',
+          'Periode Rotasi': '17,2 jam'
+        },
+        formation: 'Uranus terbentuk sekitar 4,5 miliar tahun yang lalu. Kemiringan ekstremnya mungkin disebabkan oleh tabrakan dengan objek seukuran Bumi di masa lalu.',
+        discovery: 'Uranus adalah planet pertama yang ditemukan dengan teleskop. William Herschel menemukannya pada 1781. Voyager 2 adalah satu-satunya pesawat ruang angkasa yang mengunjungi Uranus, pada 1986.',
+        characteristics: 'Uranus berotasi miring ke samping. Warna biru-hijau cerahnya berasal dari metana di atmosfer atasnya. Uranus memiliki 13 cincin samar dan 27 bulan yang dikenal.',
+        facts: '1. Musim panas di Uranus berlangsung 21 tahun Bumi! 2. Uranus adalah planet terdingin di tata surya dengan suhu mencapai -224°C. 3. Bulan-bulan Uranus dinamai dari karakter Shakespeare.'
+      },
+      neptune: {
+        title: 'Neptunus',
+        icon: '♆',
+        description: 'Neptunus adalah planet kedelapan dan terjauh dari Matahari, sebuah raksasa es dengan angin tercepat di tata surya.',
+        technicalData: {
+          'Diameter': '49.244 km',
+          'Jarak dari Matahari': '4,5 miliar km',
+          'Periode Orbit': '165 tahun',
+          'Massa': '1,024 × 10²⁶ kg',
+          'Gravitasi': '11,15 m/s²',
+          'Periode Rotasi': '16,1 jam'
+        },
+        formation: 'Neptunus terbentuk sekitar 4,5 miliar tahun yang lalu, kemungkinan lebih dekat ke Matahari dan bermigrasi ke luar ke posisinya saat ini.',
+        discovery: 'Neptunus adalah planet pertama yang ditemukan melalui prediksi matematis. Johann Galle menemukan Neptunus pada 1846. Voyager 2 adalah satu-satunya pesawat ruang angkasa yang mengunjungi Neptunus, pada 1989.',
+        characteristics: 'Neptunus memiliki warna biru cerah yang indah dari metana di atmosfernya. Angin di Neptunus adalah yang tercepat di tata surya, mencapai 2.100 km/jam. Neptunus memiliki 14 bulan yang dikenal.',
+        facts: '1. Satu tahun di Neptunus setara dengan 165 tahun Bumi. 2. Hujan berlian mungkin terjadi di interior Neptunus. 3. Triton adalah satu-satunya bulan besar dengan orbit retrograde.'
+      },
+      sun: {
+        title: 'Matahari',
+        icon: '☀️',
+        description: 'Matahari adalah bintang di pusat tata surya kita, sumber energi untuk semua kehidupan di Bumi.',
+        technicalData: {
+          'Diameter': '1,39 juta km',
+          'Massa': '1,989 × 10³�� kg',
+          'Suhu Inti': '15 juta °C',
+          'Suhu Permukaan': '5.500°C',
+          'Umur': '4,6 miliar tahun',
+          'Komposisi': '73% H, 25% He'
+        },
+        formation: 'Matahari terbentuk sekitar 4,6 miliar tahun yang lalu dari keruntuhan gravitasi sebagian nebula molekul raksasa.',
+        discovery: 'Matahari telah diamati sejak peradaban awal manusia. Helium pertama kali ditemukan di Matahari sebelum ditemukan di Bumi.',
+        characteristics: 'Matahari adalah bintang deret utama tipe G yang menghasilkan energi melalui fusi nuklir hidrogen menjadi helium di intinya. Matahari mengandung 99,86% dari semua massa di tata surya.',
+        facts: '1. Cahaya Matahari butuh 8 menit 20 detik mencapai Bumi. 2. Matahari kehilangan sekitar 4 juta ton massa per detik melalui fusi nuklir. 3. Sekitar 1 juta Bumi bisa muat di dalam Matahari.'
+      },
+      redgiant: {
+        title: 'Bintang Raksasa Merah',
+        icon: '🔴',
+        description: 'Raksasa merah adalah bintang masif yang telah mengembang dan mendingin, memasuki tahap akhir evolusinya.',
+        technicalData: {
+          'Diameter': '100-800 juta km',
+          'Massa': '0,3-8 massa Matahari',
+          'Suhu Permukaan': '3.000-5.000 K',
+          'Luminositas': '100-10.000x Matahari'
+        },
+        formation: 'Bintang raksasa merah terbentuk ketika bintang seperti Matahari kehabisan hidrogen di intinya. Inti menyusut dan memanas, menyebabkan lapisan luar mengembang secara dramatis.',
+        discovery: 'Astronom telah mengamati bintang merah terang seperti Betelgeuse dan Aldebaran sejak zaman kuno.',
+        characteristics: 'Raksasa merah sangat besar - beberapa bisa mencapai orbit Mars jika ditempatkan di pusat tata surya kita. Mereka kehilangan massa dengan cepat melalui angin bintang yang kuat.',
+        facts: '1. Matahari akan menjadi raksasa merah dalam sekitar 5 miliar tahun. 2. Beberapa raksasa merah berdenyut secara berkala. 3. Fase raksasa merah relatif singkat dalam kehidupan bintang.'
+      },
+      whitedwarf: {
+        title: 'Bintang Katai Putih',
+        icon: '⚪',
+        description: 'Katai putih adalah sisa inti bintang yang telah kehabisan bahan bakar nuklir, sangat padat dan panas.',
+        technicalData: {
+          'Diameter': 'Sekitar 10.000 km',
+          'Massa': '0,5-1,4 massa Matahari',
+          'Suhu Permukaan': '8.000-40.000 K',
+          'Kepadatan': '1 juta g/cm³'
+        },
+        formation: 'Katai putih terbentuk ketika bintang dengan massa kurang dari 8 massa Matahari kehabisan bahan bakar nuklir. Tidak ada fusi nuklir yang terjadi; katai putih bersinar dari panas sisa.',
+        discovery: '40 Eridani B, ditemukan pada 1783, adalah katai putih pertama yang diketahui. Sirius B, ditemukan pada 1862, membantu astronom memahami kepadatan ekstrem katai putih.',
+        characteristics: 'Katai putih sangat padat - satu sendok teh materialnya akan memiliki berat sekitar 15 ton di Bumi. Gravitasi permukaannya sangat kuat.',
+        facts: '1. Katai putih sebesar Bumi tetapi dengan massa sebesar Matahari. 2. Sirius B adalah katai putih terdekat, hanya 8,6 tahun cahaya dari Bumi.'
+      },
+      milkyway: {
+        title: 'Galaksi Bima Sakti',
+        icon: '🌌',
+        description: 'Bima Sakti adalah galaksi spiral yang menjadi rumah bagi tata surya kita, berisi ratusan miliar bintang.',
+        technicalData: {
+          'Diameter': '100.000 tahun cahaya',
+          'Ketebalan': '1.000 tahun cahaya',
+          'Jumlah Bintang': '200-400 miliar',
+          'Massa': '1,5 triliun massa Matahari',
+          'Umur': '13,6 miliar tahun'
+        },
+        formation: 'Bima Sakti terbentuk sekitar 13,6 miliar tahun yang lalu, tidak lama setelah Big Bang. Seiring waktu, Bima Sakti tumbuh dengan menyerap galaksi-galaksi kecil.',
+        discovery: 'Galileo pertama kali mengamati bahwa "awan susu" di langit malam sebenarnya adalah kumpulan bintang individual pada 1610.',
+        characteristics: 'Bima Sakti adalah galaksi spiral berbatang dengan empat lengan utama. Di pusatnya terdapat lubang hitam supermasif Sagittarius A* dengan massa 4 juta massa Matahari.',
+        facts: '1. Matahari membutuhkan sekitar 225-250 juta tahun untuk mengorbit pusat galaksi. 2. Bima Sakti dan Galaksi Andromeda akan bertabrakan dalam sekitar 4,5 miliar tahun.'
+      },
+      andromeda: {
+        title: 'Galaksi Andromeda',
+        icon: '🌠',
+        description: 'Andromeda adalah galaksi spiral terdekat ke Bima Sakti dan objek terjauh yang dapat dilihat dengan mata telanjang.',
+        technicalData: {
+          'Diameter': '220.000 tahun cahaya',
+          'Jarak dari Bumi': '2,537 juta tahun cahaya',
+          'Jumlah Bintang': '1 triliun',
+          'Massa': '1,5 triliun massa Matahari',
+          'Umur': '10 miliar tahun'
+        },
+        formation: 'Galaksi Andromeda terbentuk sekitar 10 miliar tahun yang lalu melalui penggabungan beberapa galaksi proto-galaksi yang lebih kecil.',
+        discovery: 'Andromeda telah dikenal sejak zaman kuno dan tercatat oleh astronom Persia Abd al-Rahman al-Sufi pada 964 M.',
+        characteristics: 'Andromeda adalah galaksi spiral terbesar di Grup Lokal. Galaksi ini mendekati Bima Sakti dengan kecepatan sekitar 110 km/detik.',
+        facts: '1. Andromeda dan Bima Sakti akan bertabrakan dalam 4,5 miliar tahun. 2. Cahaya yang kita lihat dari Andromeda berangkat 2,5 juta tahun yang lalu.'
+      },
+      stellar: {
+        title: 'Lubang Hitam Stellar',
+        icon: '⚫',
+        description: 'Lubang hitam stellar terbentuk dari keruntuhan bintang masif, dengan gravitasi begitu kuat sehingga bahkan cahaya tidak bisa lolos.',
+        technicalData: {
+          'Massa': '3-100 massa Matahari',
+          'Radius Schwarzschild': '9-300 km',
+          'Event Horizon': 'Titik tidak kembali',
+          'Singularitas': 'Kepadatan tak terbatas'
+        },
+        formation: 'Lubang hitam stellar terbentuk ketika bintang dengan massa lebih dari 20 kali Matahari mencapai akhir hidupnya dan kehabisan bahan bakar nuklir.',
+        discovery: 'Cygnus X-1, ditemukan pada 1964, adalah kandidat lubang hitam pertama yang diidentifikasi. LIGO mendeteksi gelombang gravitasi dari penggabungan lubang hitam pada 2015.',
+        characteristics: 'Lubang hitam stellar memiliki gravitasi yang sangat kuat. Event horizon adalah batas di mana kecepatan lepas melebihi kecepatan cahaya. Waktu melambat drastis mendekati event horizon.',
+        facts: '1. Waktu melambat drastis mendekati event horizon. 2. Jika Anda jatuh ke lubang hitam, spaghettifikasi akan meregangkan Anda. 3. Ada kemungkinan 100 juta lubang hitam stellar di Bima Sakti.'
+      },
+      supermassive: {
+        title: 'Lubang Hitam Supermasif',
+        icon: '����️',
+        description: 'Lubang hitam supermasif adalah lubang hitam raksasa yang ditemukan di pusat hampir semua galaksi besar.',
+        technicalData: {
+          'Massa': 'Juta-miliar massa Matahari',
+          'Radius Schwarzschild': 'Miliar km',
+          'Lokasi': 'Pusat galaksi',
+          'Sagittarius A*': '4 juta massa Matahari'
+        },
+        formation: 'Pembentukan lubang hitam supermasif masih menjadi misteri besar dalam astrofisika. Mereka tumbuh dengan menelan gas, debu, dan bintang.',
+        discovery: 'Pada 2019, Event Horizon Telescope menghasilkan gambar pertama dari shadow lubang hitam supermasif di pusat galaksi M87.',
+        characteristics: 'Hampir semua galaksi besar memiliki lubang hitam supermasif di pusatnya. Sagittarius A*, lubang hitam di pusat Bima Sakti, memiliki massa 4 juta massa Matahari.',
+        facts: '1. Lubang hitam di pusat galaksi M87 memiliki massa 6,5 miliar massa Matahari. 2. Jet relativistik dari lubang hitam supermasif dapat memanjang ribuan tahun cahaya.'
+      },
+      theoretical: {
+        title: 'Lubang Putih Teoretis',
+        icon: '⚪',
+        description: 'Lubang putih adalah objek hipotesis yang merupakan kebalikan matematis dari lubang hitam, mengeluarkan materi dan energi.',
+        technicalData: {
+          'Status': 'Teoretis',
+          'Massa': 'Variabel',
+          'Karakteristik': 'Anti-lubang hitam',
+          'Stabilitas': 'Tidak stabil'
+        },
+        formation: 'Lubang putih muncul sebagai solusi teoretis dalam persamaan relativitas umum Einstein. Mereka secara matematis mungkin tetapi sangat tidak stabil.',
+        discovery: 'Lubang putih tidak pernah diamati dan mungkin tidak ada di alam. Konsep ini pertama kali muncul dari solusi matematis pada 1916.',
+        characteristics: 'Secara teoretis, lubang putih akan memiliki horizon peristiwa seperti lubang hitam, tetapi tidak ada yang bisa masuk - hanya keluar. Lubang putih akan sangat tidak stabil.',
+        facts: '1. Tidak ada lubang putih yang pernah diamati di alam semesta. 2. Beberapa ilmuwan berspekulasi bahwa Big Bang mungkin adalah lubang putih.'
+      },
+      orion: {
+        title: 'Nebula Orion',
+        icon: '☁️',
+        description: 'Nebula Orion adalah nurseri bintang yang paling terang dan terdekat dengan Bumi, tempat bintang-bintang baru lahir.',
+        technicalData: {
+          'Jarak dari Bumi': '1.344 tahun cahaya',
+          'Diameter': '24 tahun cahaya',
+          'Massa': '2.000 massa Matahari',
+          'Umur': '3 juta tahun'
+        },
+        formation: 'Nebula Orion terbentuk dari keruntuhan gravitasi awan gas dan debu kosmik. Ribuan bintang sedang terbentuk di dalam nebula saat ini.',
+        discovery: 'Nebula Orion telah dikenal sejak zaman kuno. Fotografi pertama nebula diambil pada 1880.',
+        characteristics: 'Nebula Orion adalah nebula emisi dan nebula refleksi. Di pusatnya adalah Trapezium, sekelompok bintang muda yang sangat panas dan terang.',
+        facts: '1. Nebula Orion dapat dilihat dengan mata telanjang sebagai "bintang" tengah di pedang Orion. 2. Bintang-bintang di Trapezium hanya berumur sekitar 300.000 tahun.'
+      },
+      crab: {
+        title: 'Nebula Kepiting',
+        icon: '🦀',
+        description: 'Nebula Kepiting adalah sisa supernova yang teramati pada tahun 1054, berisi pulsar yang berputar cepat di pusatnya.',
+        technicalData: {
+          'Jarak dari Bumi': '6.500 tahun cahaya',
+          'Diameter': '11 tahun cahaya',
+          'Kecepatan Ekspansi': '1.500 km/detik',
+          'Umur': '970 tahun'
+        },
+        formation: 'Nebula Kepiting terbentuk dari supernova yang diamati oleh astronom Cina dan Arab pada 4 Juli 1054. Inti bintang yang runtuh menjadi bintang neutron yang berputat cepat.',
+        discovery: 'Supernova yang menciptakan nebula ini diamati pada 1054. Nebula sisa ditemukan kembali oleh John Bevis pada 1731.',
+        characteristics: 'Pulsar Crab di pusatnya berputar 30 kali per detik, memancarkan pancaran radiasi dari radio hingga sinar gamma.',
+        facts: '1. Supernova 1054 begitu terang sehingga terlihat di siang hari selama hampir sebulan. 2. Pulsar Crab adalah salah satu pulsar pertama yang ditemukan.'
+      },
+      leonids: {
+        title: 'Hujan Meteor Leonid',
+        icon: '☄️',
+        description: 'Leonid adalah hujan meteor tahunan yang terkenal dengan badai meteornya yang spektakuler setiap 33 tahun.',
+        technicalData: {
+          'Puncak Aktivitas': '17-18 November',
+          'Kecepatan': '71 km/detik',
+          'ZHR Normal': '10-15 meteor/jam',
+          'ZHR Badai': 'Ribuan/jam',
+          'Sumber': 'Komet 55P/Tempel-Tuttle'
+        },
+        formation: 'Hujan meteor Leonid terbentuk dari puing-puing yang ditinggalkan oleh Komet Tempel-Tuttle saat mengorbit Matahari.',
+        discovery: 'Badai meteor Leonid yang spektakuler pada 1833 mencatat hingga 100.000 meteor per jam.',
+        characteristics: 'Leonid tampak berasal dari konstelasi Leo. Meteor Leonid bergerak sangat cepat - 71 km/detik.',
+        facts: '1. Badai meteor Leonid 1833 begitu spektakuler sehingga orang-orang berpikir bintang-bintang jatuh dari langit. 2. Selama badai Leonid, meteor dapat terlihat setiap beberapa detik.'
+      },
+      ceres: {
+        title: 'Ceres',
+        icon: '🪨',
+        description: 'Ceres adalah planet kerdil terbesar di sabuk asteroid dan satu-satunya planet kerdil di tata surya bagian dalam.',
+        technicalData: {
+          'Diameter': '939 km',
+          'Jarak dari Matahari': '413,7 juta km',
+          'Periode Orbit': '4,6 tahun',
+          'Massa': '9,39 × 10²⁰ kg',
+          'Gravitasi': '0,28 m/s��'
+        },
+        formation: 'Ceres terbentuk sekitar 4,5 miliar tahun yang lalu. Gravitasi Jupiter mencegah material di sabuk asteroid untuk bergabung menjadi planet penuh.',
+        discovery: 'Ceres ditemukan pada 1 Januari 1801 oleh Giuseppe Piazzi. Ini adalah asteroid pertama yang ditemukan.',
+        characteristics: 'Ceres adalah objek bulat di sabuk asteroid dan mencakup sekitar sepertiga dari total massa sabuk asteroid. Ceres mungkin memiliki lautan air cair di bawah permukaannya.',
+        facts: '1. Ceres dinamai dari dewi Romawi untuk pertanian dan panen. 2. Ceres mengandung sekitar sepertiga dari air yang ada di semua asteroid gabungan.'
+      },
+      halley: {
+        title: 'Komet Halley',
+        icon: '💫',
+        description: 'Komet Halley adalah komet periodik paling terkenal yang terlihat dari Bumi setiap 75-76 tahun.',
+        technicalData: {
+          'Periode Orbit': '75-76 tahun',
+          'Dimensi Inti': '15×8×8 km',
+          'Massa': '2,2 × 10¹⁴ kg',
+          'Kunjungan Terakhir': '1986',
+          'Kunjungan Berikutnya': '2061'
+        },
+        formation: 'Komet Halley terbentuk sekitar 4,6 miliar tahun yang lalu di awan Oort. Setiap kali Halley melewati Matahari, ia kehilangan sekitar 200 juta ton material.',
+        discovery: 'Komet Halley telah teramati sejak setidaknya 240 SM. Edmond Halley pada 1705 menyadari bahwa komet yang diamati adalah objek yang sama dan memprediksi kembalinya pada 1758.',
+        characteristics: 'Komet Halley adalah komet jenis "short-period" dengan orbit retrograde. Intinya berbentuk kentang dan sangat gelap.',
+        facts: '1. Komet Halley akan kembali terlihat dari Bumi pada tahun 2061. 2. Penampakan komet tercatat dalam Permadani Bayeux (1066).'
+      },
+      'crab-pulsar': {
+        title: 'Crab Pulsar',
+        icon: '📡',
+        description: 'Crab Pulsar adalah bintang neutron yang berputar cepat di pusat Nebula Kepiting, memancarkan pulsa radiasi 30 kali per detik.',
+        technicalData: {
+          'Periode Rotasi': '33 milidetik',
+          'Diameter': 'Sekitar 30 km',
+          'Massa': '1,4 massa Matahari',
+          'Medan Magnet': '10¹³ Gauss',
+          'Umur': '970 tahun'
+        },
+        formation: 'Crab Pulsar terbentuk dalam ledakan supernova pada 1054. Konservasi momentum sudut menyebabkan bintang neutron berputar sangat cepat.',
+        discovery: 'Crab Pulsar ditemukan pada November 1968. Ini adalah pulsar kedua yang ditemukan dan yang pertama dikaitkan dengan sisa supernova.',
+        characteristics: 'Crab Pulsar berputar 30,2 kali per detik, memancarkan pancaran radiasi dari kutub magnetnya. Medan magnetnya adalah triliun kali lebih kuat dari medan magnet Bumi.',
+        facts: '1. Crab Pulsar sangat tepat sehingga dapat digunakan sebagai jam kosmik. 2. Kepadatan bintang neutron begitu besar sehingga satu sendok teh materialnya akan memiliki berat miliaran ton.'
+      },
+      '3c273': {
+        title: 'Kuasar 3C 273',
+        icon: '💥',
+        description: '3C 273 adalah kuasar pertama yang diidentifikasi dan salah satu objek paling terang di alam semesta yang dapat diamati.',
+        technicalData: {
+          'Jarak dari Bumi': '2,4 miliar tahun cahaya',
+          'Luminositas': '4 triliun kali Matahari',
+          'Massa Lubang Hitam': '886 juta massa Matahari',
+          'Redshift': '0,158',
+          'Magnitudo Semu': '12,9'
+        },
+        formation: '3C 273 adalah inti aktif galaksi yang didukung oleh lubang hitam supermasif di pusatnya. Materi jatuh ke lubang hitam membentuk disk akresi yang sangat panas.',
+        discovery: '3C 273 pertama kali diidentifikasi sebagai sumber radio pada 1959. Pada 1963, Maarten Schmidt mengidentifikasi garis emisi dalam spektrumnya.',
+        characteristics: '3C 273 memancarkan energi di semua panjang gelombang dari radio hingga sinar gamma. Jet relativisticnya memanjang lebih dari 200.000 tahun cahaya.',
+        facts: '1. 3C 273 adalah kuasar paling terang di langit. 2. Lubang hitam di pusatnya mengonsumsi massa setara dengan satu Bumi setiap menit.'
+      },
+      proxima: {
+        title: 'Proxima Centauri b',
+        icon: '🌍',
+        description: 'Proxima Centauri b adalah exoplanet terdekat dengan tata surya kita, mengorbit bintang terdekat dengan Matahari.',
+        technicalData: {
+          'Jarak dari Bumi': '4,24 tahun cahaya',
+          'Massa': '1,07 massa Bumi',
+          'Periode Orbit': '11,2 hari',
+          'Jarak dari Bintang': '0,0485 AU',
+          'Suhu Perkiraan': '-39°C'
+        },
+        formation: 'Proxima Centauri b kemungkinan terbentuk dari disk protoplanet sekitar 4,8 miliar tahun yang lalu.',
+        discovery: 'Proxima Centauri b ditemukan pada Agustus 2016 menggunakan metode kecepatan radial.',
+        characteristics: 'Proxima Centauri b berada di zona layak huni bintang induknya, di mana suhu memungkinkan air cair ada di permukaan.',
+        facts: '1. Proxima Centauri b adalah exoplanet terdekat yang diketahui dengan Bumi. 2. Dengan teknologi roket saat ini, perjalanan ke Proxima b akan memakan waktu puluhan ribu tahun.'
+      }
+    };
+
+    function generateCategoryIcon(iconType) {
+      const icons = {
+        planet: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="planetIcon" cx="35%" cy="35%">
+              <stop offset="0%" style="stop-color:#ffa;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#f4a460;stop-opacity:1" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="70" fill="url(#planetIcon)"/>
+          <ellipse cx="100" cy="85" rx="60" ry="8" fill="#d4a" opacity="0.4"/>
+        </svg>`,
+        star: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="starIcon" cx="50%" cy="50%">
+              <stop offset="0%" style="stop-color:#fff;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#ffd700;stop-opacity:0.8" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="60" fill="url(#starIcon)"/>
+          <circle cx="100" cy="100" r="75" fill="url(#starIcon)" opacity="0.3"/>
+        </svg>`,
+        galaxy: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="galaxyIcon" cx="50%" cy="50%">
+              <stop offset="0%" style="stop-color:#fff;stop-opacity:1" />
+              <stop offset="30%" style="stop-color:#b19cd9;stop-opacity:0.8" />
+              <stop offset="100%" style="stop-color:#6a0dad;stop-opacity:0.3" />
+            </radialGradient>
+          </defs>
+          <ellipse cx="100" cy="100" rx="80" ry="30" fill="url(#galaxyIcon)" opacity="0.8" transform="rotate(-30 100 100)"/>
+          <circle cx="100" cy="100" r="12" fill="#fff"/>
+        </svg>`,
+        blackhole: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="bhIcon" cx="50%" cy="50%">
+              <stop offset="60%" style="stop-color:#000;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#8a2be2;stop-opacity:0.3" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="60" fill="url(#bhIcon)"/>
+          <circle cx="100" cy="100" r="35" fill="#000"/>
+        </svg>`,
+        whitehole: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="whIcon" cx="50%" cy="50%">
+              <stop offset="0%" style="stop-color:#fff;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#e0e0ff;stop-opacity:0.3" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="60" fill="url(#whIcon)"/>
+          <circle cx="100" cy="100" r="35" fill="#fff"/>
+        </svg>`,
+        nebula: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="nebulaIcon" cx="40%" cy="40%">
+              <stop offset="0%" style="stop-color:#ff1493;stop-opacity:0.8" />
+              <stop offset="60%" style="stop-color:#9370db;stop-opacity:0.6" />
+              <stop offset="100%" style="stop-color:transparent;stop-opacity:0" />
+            </radialGradient>
+          </defs>
+          <ellipse cx="80" cy="90" rx="70" ry="60" fill="url(#nebulaIcon)"/>
+          <ellipse cx="120" cy="110" rx="60" ry="50" fill="url(#nebulaIcon)" opacity="0.6"/>
+        </svg>`,
+        meteor: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <linearGradient id="meteorIcon" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#ffa500;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#ff4500;stop-opacity:0.3" />
+            </linearGradient>
+          </defs>
+          <ellipse cx="140" cy="60" rx="30" ry="25" fill="#8b7355"/>
+          <path d="M 140,60 L 40,160" stroke="url(#meteorIcon)" stroke-width="20" opacity="0.7"/>
+        </svg>`,
+        asteroid: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <polygon points="100,40 140,80 130,140 70,140 60,80" fill="#696969"/>
+          <polygon points="100,40 140,80 130,140 70,140 60,80" fill="#404040" opacity="0.3"/>
+        </svg>`,
+        comet: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <linearGradient id="cometIcon" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#e0ffff;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#87ceeb;stop-opacity:0.2" />
+            </linearGradient>
+          </defs>
+          <ellipse cx="60" cy="100" rx="90" ry="35" fill="url(#cometIcon)" opacity="0.5"/>
+          <circle cx="140" cy="60" r="25" fill="#e0ffff"/>
+        </svg>`,
+        pulsar: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <circle cx="100" cy="100" r="30" fill="#00ffff"/>
+          <line x1="100" y1="100" x2="100" y2="30" stroke="#00ffff" stroke-width="3"/>
+          <line x1="100" y1="100" x2="170" y2="100" stroke="#00ffff" stroke-width="3"/>
+          <circle cx="100" cy="100" r="50" fill="none" stroke="#00ffff" stroke-width="2" opacity="0.3"/>
+        </svg>`,
+        quasar: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="quasarIcon" cx="50%" cy="50%">
+              <stop offset="0%" style="stop-color:#fff;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#ff00ff;stop-opacity:0.3" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="70" fill="url(#quasarIcon)"/>
+          <circle cx="100" cy="100" r="30" fill="#fff"/>
+        </svg>`,
+        exoplanet: `<svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <radialGradient id="exoIcon" cx="35%" cy="35%">
+              <stop offset="0%" style="stop-color:#a8d8ff;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#4a90e2;stop-opacity:1" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="60" fill="url(#exoIcon)"/>
+          <ellipse cx="100" cy="90" rx="50" ry="6" fill="#6ba3d8" opacity="0.4"/>
+        </svg>`
+      };
+      return icons[iconType] || '';
+    }
+
+    let currentCategory = null;
+    let currentSubObject = null;
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+    }
+
+    document.getElementById('nicknameForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nickname = document.getElementById('nicknameInput').value.trim();
+      if (nickname) {
+        userData.nickname = nickname;
+        document.getElementById('currentNickname').textContent = nickname;
+        renderAvatarItems();
+        showPage('avatarCreatorPage');
+      }
+    });
+
+    function renderAvatarItems() {
+      const faceContainer = document.getElementById('faceItems');
+      const clothingContainer = document.getElementById('clothingItems');
+      const accessoryContainer = document.getElementById('accessoryItems');
+
+      faceContainer.innerHTML = '';
+      avatarItems.faces.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `item-card ${item.locked && !userData.ownedItems.includes(item.id) ? 'locked' : ''} ${userData.selectedFace === item.icon ? 'selected' : ''}`;
+        card.innerHTML = `
+          <div class="item-icon">${item.icon}</div>
+          <div class="item-name">${item.name}</div>
+          ${item.price > 0 ? `<div class="item-price">${item.price}</div>` : ''}
+        `;
+        card.addEventListener('click', () => selectItem('face', item));
+        faceContainer.appendChild(card);
+      });
+
+      clothingContainer.innerHTML = '';
+      avatarItems.clothing.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `item-card ${item.locked && !userData.ownedItems.includes(item.id) ? 'locked' : ''} ${userData.selectedClothing === item.icon ? 'selected' : ''}`;
+        card.innerHTML = `
+          <div class="item-icon">${item.icon}</div>
+          <div class="item-name">${item.name}</div>
+          ${item.price > 0 ? `<div class="item-price">${item.price}</div>` : ''}
+        `;
+        card.addEventListener('click', () => selectItem('clothing', item));
+        clothingContainer.appendChild(card);
+      });
+
+      accessoryContainer.innerHTML = '';
+      avatarItems.accessories.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `item-card ${item.locked && !userData.ownedItems.includes(item.id) ? 'locked' : ''} ${userData.selectedAccessory === item.icon ? 'selected' : ''}`;
+        card.innerHTML = `
+          <div class="item-icon">${item.icon}</div>
+          <div class="item-name">${item.name}</div>
+          ${item.price > 0 ? `<div class="item-price">${item.price}</div>` : ''}
+        `;
+        card.addEventListener('click', () => selectItem('accessory', item));
+        accessoryContainer.appendChild(card);
+      });
+
+      updateAvatarDisplay();
+    }
+
+    function selectItem(type, item) {
+      if (item.locked && !userData.ownedItems.includes(item.id)) {
+        if (userData.coins >= item.price) {
+          userData.coins -= item.price;
+          userData.ownedItems.push(item.id);
+          document.getElementById('currentCoins').textContent = userData.coins;
+        } else {
+          return;
+        }
+      }
+
+      if (type === 'face') {
+        userData.selectedFace = item.icon;
+      } else if (type === 'clothing') {
+        userData.selectedClothing = item.icon;
+      } else if (type === 'accessory') {
+        userData.selectedAccessory = item.icon;
+      }
+
+      renderAvatarItems();
+    }
+
+    function updateAvatarDisplay() {
+      document.getElementById('previewFace').textContent = userData.selectedFace;
+      document.getElementById('previewClothing').textContent = userData.selectedClothing || '';
+      document.getElementById('previewAccessory').textContent = userData.selectedAccessory || '';
+    }
+
+    document.getElementById('saveAvatarBtn').addEventListener('click', () => {
+      document.getElementById('headerActions').style.display = 'flex';
+      document.getElementById('userProfile').style.display = 'flex';
+      document.getElementById('headerNickname').textContent = userData.nickname;
+      document.getElementById('headerCoins').textContent = `💰 ${userData.coins} koin`;
+      
+      const headerAvatar = document.getElementById('headerAvatar');
+      headerAvatar.querySelector('.avatar-face').textContent = userData.selectedFace;
+      headerAvatar.querySelector('.avatar-clothing').textContent = userData.selectedClothing || '';
+      headerAvatar.querySelector('.avatar-accessory').textContent = userData.selectedAccessory || '';
+
+      showPage('mainMenuPage');
+    });
+
+    document.getElementById('mainLearningCard').addEventListener('click', () => {
+      currentMode = 'learn';
+      document.getElementById('learningPageTitle').textContent = 'Kategori Pembelajaran';
+      renderCategories();
+      showPage('learningPage');
+    });
+
+    document.getElementById('quizModeCard').addEventListener('click', () => {
+      currentMode = 'quiz';
+      document.getElementById('learningPageTitle').textContent = 'Materi & Kuis';
+      renderCategories();
+      showPage('learningPage');
+    });
+
+    document.getElementById('brainTrainerCard').addEventListener('click', () => {
+      renderBrainTrainer();
+      showPage('brainTrainerPage');
+    });
+
+    function renderCategories() {
+      const grid = document.getElementById('categoriesGrid');
+      grid.innerHTML = '';
+      
+      categories.forEach(cat => {
+        const card = document.createElement('div');
+        card.className = 'category-card';
+        card.innerHTML = `
+          <div class="category-image">
+            ${generateCategoryIcon(cat.icon)}
+          </div>
+          <div class="category-content">
+            <h3 class="category-title">${cat.name}</h3>
+            <p class="category-desc">${cat.desc}</p>
+          </div>
+        `;
+        card.addEventListener('click', () => {
+          currentCategory = cat;
+          renderSubObjects(cat.id);
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    function renderSubObjects(categoryId) {
+      const grid = document.getElementById('subObjectsGrid');
+      const title = document.getElementById('subObjectsTitle');
+      
+      const category = categories.find(c => c.id === categoryId);
+      title.textContent = category.name;
+      
+      grid.innerHTML = '';
+      const objects = subObjects[categoryId] || [];
+      
+      objects.forEach(obj => {
+        const card = document.createElement('div');
+        card.className = 'sub-object-card';
+        
+        let iconContent = '';
+        if (obj.svg && categoryId === 'planets') {
+          iconContent = generatePlanetSVG(obj.id);
+        } else {
+          iconContent = `<span style="font-size: 3rem;">${obj.icon}</span>`;
+        }
+        
+        card.innerHTML = `
+          <div class="sub-object-icon">${iconContent}</div>
+          <div class="sub-object-name">${obj.name}</div>
+        `;
+        card.addEventListener('click', () => showDetail(obj.id));
+        grid.appendChild(card);
+      });
+      
+      showPage('subObjectsPage');
+    }
+
+    function showDetail(objectId) {
+      currentSubObject = objectId;
+      const data = detailData[objectId];
+      
+      if (!data) {
+        return;
+      }
+      
+      document.getElementById('detailTitle').textContent = data.title;
+      
+      const rotatingContainer = document.getElementById('rotatingObjectContainer');
+      rotatingContainer.innerHTML = createSimpleImage(objectId);
+      
+      const contentDiv = document.getElementById('detailContent');
+      contentDiv.innerHTML = `
+        <div class="detail-section">
+          <h3>Deskripsi</h3>
+          <p>${data.description}</p>
+        </div>
+        
+        <div class="detail-section">
+          <h3>Data Teknis</h3>
+          <div class="detail-data">
+            ${Object.entries(data.technicalData).map(([key, value]) => `
+              <div class="data-item">
+                <div class="data-label">${key}</div>
+                <div class="data-value">${value}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        
+        <div class="detail-section">
+          <h3>Pembentukan</h3>
+          <p>${data.formation}</p>
+        </div>
+        
+        <div class="detail-section">
+          <h3>Penemuan</h3>
+          <p>${data.discovery}</p>
+        </div>
+        
+        <div class="detail-section">
+          <h3>Karakteristik</h3>
+          <p>${data.characteristics}</p>
+        </div>
+        
+        <div class="detail-section">
+          <h3>Fakta Menarik</h3>
+          <p>${data.facts}</p>
+        </div>
+      `;
+      
+      const actionsDiv = document.getElementById('detailActions');
+      if (currentMode === 'quiz') {
+        actionsDiv.innerHTML = `
+          <button class="btn" id="startQuizBtn">Mulai Kuis 📝</button>
+          <button class="btn btn-secondary" id="backToListBtn">Kembali ke Daftar</button>
+        `;
+        document.getElementById('startQuizBtn').addEventListener('click', () => {
+          startQuiz(objectId);
+          showPage('quizPage');
+        });
+      } else {
+        actionsDiv.innerHTML = `
+          <button class="btn btn-secondary" id="backToListBtn">Kembali ke Daftar</button>
+        `;
+      }
+      
+      document.getElementById('backToListBtn').addEventListener('click', () => {
+        showPage('subObjectsPage');
+      });
+      
+      showPage('detailPage');
+    }
+
+    const brainTrainerCases = {
+      oumuamua: {
+        title: "Oumuamua - Pengunjung Antarbintang",
+        icon: "🚀",
+        preview: "Objek pertama yang terdeteksi dari luar tata surya kita. Apa sebenarnya Oumuamua?",
+        fullContent: `
+          <div class="detail-section">
+            <h3>Misteri Oumuamua</h3>
+            <p>Pada Oktober 2017, teleskop Pan-STARRS1 di Hawaii mendeteksi objek aneh yang meluncur menembus tata surya kita dengan kecepatan luar biasa. Objek ini diberi nama 'Oumuamua, yang berarti "penjelajah" atau "utusan dari jauh yang tiba pertama" dalam bahasa Hawaii.</p>
+            <p>Yang membuat Oumuamua istimewa adalah bentuknya yang sangat tidak biasa - memanjang seperti cerutu atau pancake, dengan perbandingan panjang-lebar sekitar 10:1. Tidak ada objek dalam tata surya kita yang memiliki bentuk seperti ini.</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Karakteristik Aneh</h3>
+            <p><strong>1. Percepatan Misterius:</strong> Oumuamua mengalami percepatan kecil yang tidak bisa dijelaskan hanya dengan gravitasi. Ini biasanya terjadi pada komet karena gas yang menguap, tetapi tidak ada ekor komet yang terdeteksi pada Oumuamua.</p>
+            <p><strong>2. Kecerlangan Berubah:</strong> Kecerahannya berubah drastis setiap 7,3 jam, menunjukkan objek yang berputar atau memiliki bentuk sangat memanjang.</p>
+            <p><strong>3. Kecepatan Tinggi:</strong> Oumuamua bergerak dengan kecepatan 87,3 km/detik relatif terhadap Matahari - terlalu cepat untuk tertangkap gravitasi Matahari.</p>
+            <p><strong>4. Permukaan Kemerahan:</strong> Warnanya kemerahan, menunjukkan permukaan yang telah terpapar radiasi kosmik selama jutaan tahun.</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Teori-Teori</h3>
+            <p><strong>Teori 1 - Komet Antarbintang:</strong> Mungkin Oumuamua adalah komet yang terbuat dari es nitrogen (seperti permukaan Pluto), yang menguap tanpa menghasilkan ekor yang terlihat.</p>
+            <p><strong>Teori 2 - Pecahan Planet:</strong> Bisa jadi fragmen dari planet yang hancur di sistem bintang lain, terlempar ke luar angkasa oleh tumbukan dahsyat.</p>
+            <p><strong>Teori 3 - Debu Kosmik:</strong> Mungkin gumpalan debu kosmik yang sangat ringan dan tipis, sehingga tekanan radiasi matahari memberikan dorongan tambahan.</p>
+            <p><strong>Teori 4 - Lightsail Alien (Kontroversial):</strong> Astronom Avi Loeb dari Harvard mengusulkan kemungkinan Oumuamua adalah layar cahaya buatan alien, meski teori ini sangat kontroversial dan tidak didukung mayoritas ilmuwan.</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Pertanyaan untuk Direnungkan</h3>
+            <p>🤔 Mengapa tidak ada ekor komet yang terdeteksi padahal ada percepatan non-gravitasi?</p>
+            <p>🤔 Apakah bentuk memanjang yang ekstrem adalah hal biasa di luar tata surya kita?</p>
+            <p>🤔 Berapa banyak objek antarbintang lain yang mungkin melewati tata surya tanpa terdeteksi?</p>
+            <p>🤔 Jika kita bisa mengirim probe untuk menyelidikinya, apa yang akan kita temukan?</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Fakta Menarik</h3>
+            <p>• Oumuamua melintasi tata surya hanya dalam 3 bulan sebelum menghilang ke kegelapan antarbintang</p>
+            <p>• Diperkirakan ada 1 objek antarbintang seperti Oumuamua yang melewati tata surya bagian dalam setiap tahun</p>
+            <p>• Oumuamua sekarang sudah terlalu jauh untuk diamati bahkan dengan teleskop terkuat</p>
+            <p>• Nama lengkapnya adalah 1I/2017 U1, di mana "I" berarti "Interstellar" (antarbintang)</p>
+          </div>
+        `
+      },
+      borisov: {
+        title: "2I/Borisov - Komet Alien",
+        icon: "☄️",
+        preview: "Komet kedua yang datang dari sistem bintang lain. Apa yang membuatnya istimewa?",
+        fullContent: `
+          <div class="detail-section">
+            <h3>Komet dari Bintang Lain</h3>
+            <p>Pada 30 Agustus 2019, astronom amatir Gennady Borisov dari Krimea menemukan objek redup di langit malam menggunakan teleskop buatan sendiri. Objek ini ternyata adalah komet antarbintang kedua yang pernah ditemukan - 2I/Borisov!</p>
+            <p>Berbeda dengan Oumuamua yang misterius, 2I/Borisov terlihat dan berperilaku seperti komet normal dari tata surya kita, dengan ekor gas dan debu yang jelas terlihat. Ini memberikan kesempatan emas bagi para astronom untuk mempelajari komposisi kimia dari sistem bintang lain.</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Karakteristik Unik</h3>
+            <p><strong>Kecepatan Ekstrem:</strong> Borisov bergerak dengan kecepatan 33 km/detik relatif terhadap Matahari, jauh lebih cepat dari komet lokal kita.</p>
+            <p><strong>Orbit Hiperbola:</strong> Lintasannya berbentuk hiperbola terbuka, membuktikan ia datang dari luar tata surya dan tidak akan pernah kembali.</p>
+            <p><strong>Komposisi Kimia:</strong> Analisis spektrum menunjukkan kandungan karbon monoksida yang sangat tinggi - lebih tinggi dari komet manapun yang pernah diamati di dekat Matahari.</p>
+            <p><strong>Ukuran Inti:</strong> Diameter inti komet diperkirakan sekitar 400 meter - relatif kecil untuk komet.</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Apa yang Kita Pelajari</h3>
+            <p><strong>1. Kemiripan Universal:</strong> Komet di sistem bintang lain ternyata mirip dengan komet kita, menunjukkan proses pembentukan planet yang universal.</p>
+            <p><strong>2. Komposisi Berbeda:</strong> Rasio karbon monoksida yang tinggi menunjukkan Borisov terbentuk di lingkungan yang sangat dingin, mungkin di bagian luar sistem bintangnya.</p>
+            <p><strong>3. Sistem Planet Lain:</strong> Keberadaan Borisov membuktikan sistem planet lain memiliki komet yang bisa terlempar ke ruang antarbintang.</p>
+            <p><strong>4. Fragmentasi:</strong> Hubble menangkap momen ketika Borisov mulai pecah menjadi fragmen-fragmen saat mendekati Matahari.</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Perbandingan dengan Oumuamua</h3>
+            <p><strong>Oumuamua:</strong> Bentuk aneh (memanjang), tidak ada ekor, percepatan misterius, sangat reflektif</p>
+            <p><strong>Borisov:</strong> Bentuk normal, memiliki ekor jelas, perilaku seperti komet biasa, komposisi dapat dianalisis</p>
+            <p>Perbedaan drastis ini membuat para ilmuwan bertanya-tanya: apakah Oumuamua benar-benar komet, atau jenis objek yang sama sekali berbeda?</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Tantangan Penelitian</h3>
+            <p>🔬 Bagaimana kita bisa membedakan objek antarbintang dari objek tata surya hanya dengan pengamatan singkat?</p>
+            <p>🔬 Apakah ada cara untuk mengirim misi ke objek antarbintang berikutnya yang lewat?</p>
+            <p>🔬 Apa yang membuat komposisi kimia Borisov berbeda dari komet tata surya kita?</p>
+            <p>🔬 Berapa persen komet yang terlempar dari sistem planet berhasil bertahan perjalanan antarbintang?</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Fakta Menarik</h3>
+            <p>• Borisov adalah objek antarbintang pertama yang ditemukan oleh astronom amatir</p>
+            <p>• Teleskop Hubble, Gemini, dan VLT semua mengamati Borisov untuk mendapatkan data sebanyak mungkin</p>
+            <p>• Borisov mencapai perihelion (titik terdekat dengan Matahari) pada 8 Desember 2019</p>
+            <p>• Kandungan air Borisov mirip dengan komet tata surya kita, menunjukkan air mungkin umum di seluruh galaksi</p>
+          </div>
+        `
+      },
+      fermi: {
+        title: "Paradoks Fermi",
+        icon: "👽",
+        preview: "Jika alien ada, mengapa kita tidak pernah bertemu mereka?",
+        fullContent: `
+          <div class="detail-section">
+            <h3>Pertanyaan Besar Enrico Fermi</h3>
+            <p>Pada musim panas 1950, fisikawan terkenal Enrico Fermi sedang makan siang dengan koleganya di Los Alamos ketika pembicaraan beralih ke UFO dan kehidupan alien. Di tengah diskusi, Fermi tiba-tiba bertanya: "Di mana semua orang?"</p>
+            <p>Pertanyaan sederhana ini menyembunyikan paradoks mendalam: Dengan miliaran bintang di galaksi kita (banyak lebih tua dari Matahari), dan miliaran tahun untuk peradaban berkembang, seharusnya galaksi sudah penuh dengan kehidupan cerdas. Tapi mengapa kita tidak melihat bukti apapun?</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Skala Masalahnya</h3>
+            <p><strong>Bima Sakti:</strong> 200-400 miliar bintang</p>
+            <p><strong>Usia Galaksi:</strong> 13,6 miliar tahun (Matahari baru 4,6 miliar tahun)</p>
+            <p><strong>Planet Layak Huni:</strong> Miliaran planet di zona layak huni</p>
+            <p><strong>Waktu Kolonisasi:</strong> Dengan teknologi sub-cahaya, peradaban bisa menjajah seluruh galaksi dalam 5-50 juta tahun (sangat singkat dalam skala kosmik)</p>
+            <p>Jadi mengapa tidak ada yang menjajah Bumi? Mengapa langit malam begitu sunyi?</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Solusi Usulan - Filter Besar</h3>
+            <p><strong>Hipotesis Filter Besar:</strong> Ada tahapan sangat sulit dalam evolusi kehidupan yang jarang sekali berhasil dilewati. Filter ini bisa berada:</p>
+            <p><strong>Di Belakang Kita:</strong> Mungkin munculnya kehidupan atau kehidupan kompleks sangat jarang. Kita beruntung sudah melewatinya. (Berita bagus!)</p>
+            <p><strong>Di Depan Kita:</strong> Mungkin semua peradaban maju memusnahkan diri sendiri atau menghadapi bencana yang tidak terhindarkan. (Berita buruk!)</p>
+            <p>Contoh filter: abiogenesis (kehidupan dari non-kehidupan), sel eukariot, kehidupan multiseluler, kecerdasan, teknologi, peradaban berkelanjutan.</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Solusi Lainnya</h3>
+            <p><strong>1. Hipotesis Kebun Binatang:</strong> Alien sengaja menghindari kontak, membiarkan kita berkembang alami seperti cagar alam.</p>
+            <p><strong>2. Mereka Sudah Di Sini:</strong> Alien sudah mengamati kita tapi tidak menunjukkan diri, atau buktinya disembunyikan pemerintah.</p>
+            <p><strong>3. Terlalu Jauh:</strong> Jarak antarbintang terlalu besar, komunikasi terlalu lambat, dan kolonisasi galaksi tidak praktis atau tidak diinginkan.</p>
+            <p><strong>4. Kita Terlalu Dini:</strong> Peradaban kita muncul relatif awal dalam sejarah galaksi. Kita mungkin salah satu peradaban pertama.</p>
+            <p><strong>5. Mereka Berbeda:</strong> Kehidupan alien mungkin sangat berbeda sehingga kita tidak mengenali mereka atau sinyal mereka.</p>
+            <p><strong>6. The Singularity:</strong> Peradaban maju mungkin beralih ke realitas virtual atau dimensi lain yang tidak bisa kita deteksi.</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Implikasi untuk Manusia</h3>
+            <p><strong>Jika Kita Sendirian:</strong> Kehidupan cerdas sangat langka, dan kita memiliki tanggung jawab kosmik untuk melestarikan dan menyebarkan kehidupan.</p>
+            <p><strong>Jika Filter Di Depan:</strong> Kita harus sangat berhati-hati dengan teknologi berbahaya (AI, senjata nuklir, bioteknologi) karena mereka mungkin menjadi filter yang memusnahkan kita.</p>
+            <p><strong>Jika Mereka Bersembunyi:</strong> Mungkin ada alasan bagus untuk tidak membuat kebisingan di galaksi. Haruskah kita berhenti menyiarkan keberadaan kita?</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Pertanyaan Mendalam</h3>
+            <p>🌌 Mana yang lebih menakutkan: kita sendirian, atau kita tidak sendirian?</p>
+            <p>🌌 Apakah kita benar-benar ingin menemukan alien, atau lebih baik tetap tersembunyi?</p>
+            <p>🌌 Jika filter besar ada di depan, bisakah kita menjadi peradaban pertama yang melewatinya?</p>
+            <p>🌌 Apakah pencarian SETI harus dilanjutkan atau dihentikan demi keamanan?</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Upaya Pencarian</h3>
+            <p><strong>SETI:</strong> Search for Extraterrestrial Intelligence menggunakan teleskop radio untuk mencari sinyal alien sejak 1960.</p>
+            <p><strong>Breakthrough Listen:</strong> Program $100 juta untuk mencari sinyal teknologi alien di jutaan bintang.</p>
+            <p><strong>Technosignatures:</strong> Mencari bukti tidak langsung seperti struktur Dyson sphere atau polusi atmosfer industri di exoplanet.</p>
+            <p><strong>Hasil Sejauh Ini:</strong> "Wow! Signal" (1977) tetap menjadi kandidat terbaik, tapi tidak pernah terulang dan masih misterius.</p>
+          </div>
+        `
+      }
+    };
+
+    function renderBrainTrainer() {
+      const grid = document.getElementById('brainTrainerGrid');
+      grid.innerHTML = '';
+      
+      Object.keys(brainTrainerCases).forEach(caseId => {
+        const caseData = brainTrainerCases[caseId];
+        const card = document.createElement('div');
+        card.className = 'case-card';
+        card.innerHTML = `
+          <h3 class="case-title">${caseData.title}</h3>
+          <p class="case-preview">${caseData.preview}</p>
+        `;
+        card.addEventListener('click', () => showCaseDetail(caseId));
+        grid.appendChild(card);
+      });
+    }
+
+    function showCaseDetail(caseId) {
+      const caseData = brainTrainerCases[caseId];
+      document.getElementById('caseDetailTitle').textContent = caseData.title;
+      document.getElementById('caseDetailContent').innerHTML = caseData.fullContent;
+      showPage('caseDetailPage');
+    }
+
+    document.getElementById('menuBtn').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.add('active');
+    });
+
+    document.getElementById('sidebarClose').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.remove('active');
+    });
+
+    document.querySelector('[data-action="mainMenu"]').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('sidebar').classList.remove('active');
+      showPage('mainMenuPage');
+    });
+
+    document.querySelector('[data-action="editAvatar"]').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('sidebar').classList.remove('active');
+      renderAvatarItems();
+      showPage('avatarCreatorPage');
+    });
+
+    document.querySelector('[data-action="logout"]').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('sidebar').classList.remove('active');
+      document.getElementById('headerActions').style.display = 'none';
+      userData = {
+        nickname: '',
+        selectedFace: '😊',
+        selectedClothing: null,
+        selectedAccessory: null,
+        coins: 50,
+        ownedItems: []
+      };
+      document.getElementById('nicknameInput').value = '';
+      showPage('welcomePage');
+    });
+
+    document.getElementById('backToMainMenu').addEventListener('click', () => {
+      showPage('mainMenuPage');
+    });
+
+    document.getElementById('backToCategories').addEventListener('click', () => {
+      showPage('learningPage');
+    });
+
+    document.getElementById('backToSubObjects').addEventListener('click', () => {
+      showPage('subObjectsPage');
+    });
+
+    document.getElementById('backToDetail').addEventListener('click', () => {
+      showPage('detailPage');
+    });
+
+    const quizData = {
+      mercury: [
+        {
+          question: "Berapa lama Merkurius mengelilingi Matahari?",
+          options: ["88 hari", "365 hari", "687 hari", "225 hari"],
+          correct: 0
+        },
+        {
+          question: "Mengapa Merkurius menjadi planet terpanas di tata surya?",
+          options: ["Karena terdekat dengan Matahari", "Karena efek rumah kaca", "Karena tidak memiliki atmosfer", "Karena ukurannya kecil"],
+          correct: 2,
+          explanation: "Sebenarnya Merkurius BUKAN planet terpanas meski terdekat dengan Matahari. Venus lebih panas karena efek rumah kaca. Merkurius tidak memiliki atmosfer untuk menahan panas."
+        },
+        {
+          question: "Apa yang unik tentang inti Merkurius?",
+          options: ["Sangat kecil", "Sangat besar (75% diameter)", "Terbuat dari es", "Tidak ada inti"],
+          correct: 1
+        }
+      ],
+      venus: [
+        {
+          question: "Berapa suhu permukaan Venus?",
+          options: ["100°C", "250°C", "462°C", "800°C"],
+          correct: 2
+        },
+        {
+          question: "Apa yang membuat Venus unik dalam rotasinya?",
+          options: ["Berputar sangat cepat", "Berputar terbalik (retrograde)", "Tidak berputar sama sekali", "Berputar miring"],
+          correct: 1
+        },
+        {
+          question: "Apa komposisi utama atmosfer Venus?",
+          options: ["Nitrogen", "Oksigen", "Karbon dioksida (96,5%)", "Metana"],
+          correct: 2
+        }
+      ],
+      earth: [
+        {
+          question: "Berapa persen permukaan Bumi yang tertutup air?",
+          options: ["50%", "61%", "71%", "85%"],
+          correct: 2
+        },
+        {
+          question: "Kapan kehidupan pertama muncul di Bumi?",
+          options: ["1 miliar tahun lalu", "2,5 miliar tahun lalu", "3,8 miliar tahun lalu", "4,5 miliar tahun lalu"],
+          correct: 2
+        },
+        {
+          question: "Apa yang melindungi Bumi dari radiasi matahari?",
+          options: ["Atmosfer tebal", "Medan magnet", "Lapisan ozon", "Semua jawaban benar"],
+          correct: 3
+        }
+      ],
+      mars: [
+        {
+          question: "Mengapa Mars berwarna merah?",
+          options: ["Karena panas", "Karena besi oksida (karat)", "Karena debu", "Karena atmosfer"],
+          correct: 1
+        },
+        {
+          question: "Apa nama gunung berapi terbesar di Mars?",
+          options: ["Mount Everest", "Olympus Mons", "Arsia Mons", "Elysium Mons"],
+          correct: 1
+        },
+        {
+          question: "Berapa lama satu hari di Mars?",
+          options: ["24 jam", "24 jam 37 menit", "25 jam", "30 jam"],
+          correct: 1
+        }
+      ],
+      jupiter: [
+        {
+          question: "Apa yang membuat Great Red Spot istimewa?",
+          options: ["Gunung tertinggi", "Badai raksasa berusia 400+ tahun", "Kawah terbesar", "Danau merah"],
+          correct: 1
+        },
+        {
+          question: "Berapa banyak bulan yang dimiliki Jupiter?",
+          options: ["12", "45", "67", "95+"],
+          correct: 3
+        },
+        {
+          question: "Apa komposisi utama Jupiter?",
+          options: ["Batu", "Es", "Hidrogen dan Helium (90% H, 10% He)", "Air"],
+          correct: 2
+        }
+      ],
+      saturn: [
+        {
+          question: "Terbuat dari apa cincin Saturnus?",
+          options: ["Gas", "Miliaran partikel es dan batu", "Logam", "Debu vulkanik"],
+          correct: 1
+        },
+        {
+          question: "Apa yang unik tentang kepadatan Saturnus?",
+          options: ["Paling padat", "Bisa mengapung di air", "Paling berat", "Tidak memiliki inti"],
+          correct: 1
+        },
+        {
+          question: "Bulan mana yang memiliki atmosfer tebal di Saturnus?",
+          options: ["Enceladus", "Mimas", "Titan", "Rhea"],
+          correct: 2
+        }
+      ],
+      uranus: [
+        {
+          question: "Apa yang unik tentang rotasi Uranus?",
+          options: ["Sangat cepat", "Miring 98 derajat (berputar ke samping)", "Tidak berputar", "Retrograde"],
+          correct: 1
+        },
+        {
+          question: "Mengapa Uranus berwarna biru-hijau?",
+          options: ["Karena air", "Karena metana di atmosfer", "Karena es", "Karena tembaga"],
+          correct: 1
+        },
+        {
+          question: "Siapa yang menemukan Uranus?",
+          options: ["Galileo", "Newton", "William Herschel (1781)", "Hubble"],
+          correct: 2
+        }
+      ],
+      neptune: [
+        {
+          question: "Apa yang membuat angin di Neptunus istimewa?",
+          options: ["Paling lambat", "Paling cepat di tata surya (2.100 km/jam)", "Tidak ada angin", "Angin hangat"],
+          correct: 1
+        },
+        {
+          question: "Berapa lama Neptunus mengorbit Matahari?",
+          options: ["30 tahun", "84 tahun", "165 tahun", "248 tahun"],
+          correct: 2
+        },
+        {
+          question: "Bagaimana Neptunus ditemukan?",
+          options: ["Dengan teleskop biasa", "Melalui prediksi matematis", "Oleh satelit", "Secara tidak sengaja"],
+          correct: 1
+        }
+      ],
+      sun: [
+        {
+          question: "Berapa suhu di inti Matahari?",
+          options: ["5.500°C", "1 juta °C", "15 juta °C", "100 juta °C"],
+          correct: 2
+        },
+        {
+          question: "Berapa lama cahaya Matahari mencapai Bumi?",
+          options: ["1 menit", "8 menit 20 detik", "1 jam", "1 hari"],
+          correct: 1
+        },
+        {
+          question: "Berapa persen massa tata surya yang ada di Matahari?",
+          options: ["50%", "75%", "90%", "99,86%"],
+          correct: 3
+        }
+      ],
+      redgiant: [
+        {
+          question: "Apa yang terjadi saat bintang menjadi raksasa merah?",
+          options: ["Mengecil dan mendingin", "Membesar dan mendingin", "Meledak", "Menjadi lubang hitam"],
+          correct: 1
+        },
+        {
+          question: "Kapan Matahari akan menjadi raksasa merah?",
+          options: ["1 miliar tahun lagi", "5 miliar tahun lagi", "10 miliar tahun lagi", "Tidak akan pernah"],
+          correct: 1
+        },
+        {
+          question: "Contoh bintang raksasa merah yang terkenal?",
+          options: ["Sirius", "Proxima Centauri", "Betelgeuse", "Vega"],
+          correct: 2
+        }
+      ],
+      whitedwarf: [
+        {
+          question: "Seberapa padat katai putih?",
+          options: ["Seperti air", "Seperti besi", "1 sendok teh = 15 ton", "Seperti udara"],
+          correct: 2
+        },
+        {
+          question: "Apakah katai putih masih melakukan fusi nuklir?",
+          options: ["Ya, sangat aktif", "Tidak, hanya bersinar dari panas sisa", "Kadang-kadang", "Hanya di pusatnya"],
+          correct: 1
+        },
+        {
+          question: "Katai putih terdekat dengan Bumi?",
+          options: ["Proxima Centauri", "Sirius B", "Betelgeuse", "Alpha Centauri"],
+          correct: 1
+        }
+      ],
+      milkyway: [
+        {
+          question: "Berapa jumlah bintang di Bima Sakti?",
+          options: ["1-10 miliar", "10-50 miliar", "200-400 miliar", "1 triliun"],
+          correct: 2
+        },
+        {
+          question: "Berapa lama Matahari mengorbit pusat galaksi?",
+          options: ["1 juta tahun", "25 juta tahun", "225-250 juta tahun", "1 miliar tahun"],
+          correct: 2
+        },
+        {
+          question: "Apa yang ada di pusat Bima Sakti?",
+          options: ["Bintang raksasa", "Lubang hitam supermasif (Sagittarius A*)", "Nebula", "Planet raksasa"],
+          correct: 1
+        }
+      ],
+      andromeda: [
+        {
+          question: "Berapa jarak Andromeda dari Bumi?",
+          options: ["100 ribu tahun cahaya", "1 juta tahun cahaya", "2,537 juta tahun cahaya", "10 juta tahun cahaya"],
+          correct: 2
+        },
+        {
+          question: "Apa yang akan terjadi dengan Andromeda dan Bima Sakti?",
+          options: ["Saling menjauh", "Bertabrakan dalam 4,5 miliar tahun", "Tetap pada posisi", "Andromeda akan hancur"],
+          correct: 1
+        },
+        {
+          question: "Apakah Andromeda lebih besar dari Bima Sakti?",
+          options: ["Ya, lebih besar", "Tidak, lebih kecil", "Ukurannya sama", "Tidak bisa dibandingkan"],
+          correct: 0
+        }
+      ],
+      stellar: [
+        {
+          question: "Bagaimana lubang hitam stellar terbentuk?",
+          options: ["Dari planet yang hancur", "Dari keruntuhan bintang masif (>20 massa Matahari)", "Dari tabrakan galaksi", "Dari Big Bang"],
+          correct: 1
+        },
+        {
+          question: "Apa itu event horizon?",
+          options: ["Pusat lubang hitam", "Batas titik tidak kembali", "Cahaya yang keluar", "Atmosfer lubang hitam"],
+          correct: 1
+        },
+        {
+          question: "Berapa banyak lubang hitam stellar di Bima Sakti?",
+          options: ["Ratusan", "Ribuan", "Jutaan", "Sekitar 100 juta"],
+          correct: 3
+        }
+      ],
+      supermassive: [
+        {
+          question: "Di mana lubang hitam supermasif biasanya ditemukan?",
+          options: ["Di ruang antarbintang", "Di pusat galaksi", "Di dekat Bumi", "Di nebula"],
+          correct: 1
+        },
+        {
+          question: "Berapa massa Sagittarius A* (lubang hitam di pusat Bima Sakti)?",
+          options: ["100 ribu massa Matahari", "1 juta massa Matahari", "4 juta massa Matahari", "1 miliar massa Matahari"],
+          correct: 2
+        },
+        {
+          question: "Siapa yang pertama kali memotret shadow lubang hitam?",
+          options: ["Hubble", "Event Horizon Telescope (2019)", "James Webb", "Voyager"],
+          correct: 1
+        }
+      ],
+      theoretical: [
+        {
+          question: "Apa itu lubang putih secara teoretis?",
+          options: ["Bintang putih terang", "Kebalikan lubang hitam (mengeluarkan materi)", "Planet es", "Galaksi putih"],
+          correct: 1
+        },
+        {
+          question: "Apakah lubang putih pernah diamati?",
+          options: ["Ya, banyak", "Ya, beberapa", "Tidak, hanya teoretis", "Ya, satu kali"],
+          correct: 2
+        },
+        {
+          question: "Apa hubungan Big Bang dengan lubang putih?",
+          options: ["Tidak ada hubungan", "Big Bang mungkin adalah lubang putih", "Big Bang menciptakan lubang putih", "Lubang putih menghancurkan Big Bang"],
+          correct: 1
+        }
+      ],
+      orion: [
+        {
+          question: "Apa fungsi Nebula Orion?",
+          options: ["Kuburan bintang", "Tempat lahir bintang (nurseri bintang)", "Sisa supernova", "Lubang hitam"],
+          correct: 1
+        },
+        {
+          question: "Berapa jarak Nebula Orion dari Bumi?",
+          options: ["100 tahun cahaya", "500 tahun cahaya", "1.344 tahun cahaya", "5.000 tahun cahaya"],
+          correct: 2
+        },
+        {
+          question: "Apa itu Trapezium di Nebula Orion?",
+          options: ["Sekelompok planet", "Sekelompok bintang muda yang terang", "Asteroid cluster", "Lubang hitam"],
+          correct: 1
+        }
+      ],
+      crab: [
+        {
+          question: "Kapan supernova yang membentuk Nebula Kepiting terjadi?",
+          options: ["1054", "1572", "1604", "1987"],
+          correct: 0
+        },
+        {
+          question: "Apa yang ada di pusat Nebula Kepiting?",
+          options: ["Lubang hitam", "Bintang neutron/Pulsar yang berputar cepat", "Bintang raksasa", "Planet"],
+          correct: 1
+        },
+        {
+          question: "Berapa kali Pulsar Crab berputar per detik?",
+          options: ["1 kali", "10 kali", "30 kali", "100 kali"],
+          correct: 2
+        }
+      ],
+      leonids: [
+        {
+          question: "Kapan puncak hujan meteor Leonid?",
+          options: ["Januari", "Agustus", "17-18 November", "Desember"],
+          correct: 2
+        },
+        {
+          question: "Dari komet mana Leonid berasal?",
+          options: ["Komet Halley", "Komet 55P/Tempel-Tuttle", "Komet Hale-Bopp", "Komet NEOWISE"],
+          correct: 1
+        },
+        {
+          question: "Berapa kecepatan meteor Leonid?",
+          options: ["10 km/detik", "30 km/detik", "71 km/detik", "100 km/detik"],
+          correct: 2
+        }
+      ],
+      ceres: [
+        {
+          question: "Di mana Ceres berada?",
+          options: ["Dekat Merkurius", "Sabuk asteroid", "Sabuk Kuiper", "Awan Oort"],
+          correct: 1
+        },
+        {
+          question: "Kapan Ceres ditemukan?",
+          options: ["1 Januari 1801 (asteroid pertama)", "1930", "1950", "2000"],
+          correct: 0
+        },
+        {
+          question: "Apa yang unik tentang Ceres?",
+          options: ["Planet terbesar", "Planet kerdil dan satu-satunya di sabuk asteroid", "Komet tercepat", "Bulan terbesar"],
+          correct: 1
+        }
+      ],
+      halley: [
+        {
+          question: "Berapa periode orbit Komet Halley?",
+          options: ["10 tahun", "50 tahun", "75-76 tahun", "100 tahun"],
+          correct: 2
+        },
+        {
+          question: "Kapan Komet Halley terakhir terlihat dari Bumi?",
+          options: ["1910", "1986", "2000", "2010"],
+          correct: 1
+        },
+        {
+          question: "Kapan Komet Halley akan kembali terlihat?",
+          options: ["2030", "2045", "2061", "2100"],
+          correct: 2
+        }
+      ],
+      'crab-pulsar': [
+        {
+          question: "Berapa periode rotasi Crab Pulsar?",
+          options: ["1 detik", "100 milidetik", "33 milidetik", "1 milidetik"],
+          correct: 2
+        },
+        {
+          question: "Berapa diameter Crab Pulsar?",
+          options: ["1 km", "Sekitar 30 km", "100 km", "1.000 km"],
+          correct: 1
+        },
+        {
+          question: "Kapan Crab Pulsar ditemukan?",
+          options: ["1054", "1731", "November 1968", "2000"],
+          correct: 2
+        }
+      ],
+      '3c273': [
+        {
+          question: "Berapa jarak 3C 273 dari Bumi?",
+          options: ["100 juta tahun cahaya", "1 miliar tahun cahaya", "2,4 miliar tahun cahaya", "10 miliar tahun cahaya"],
+          correct: 2
+        },
+        {
+          question: "Apa yang membuat 3C 273 sangat terang?",
+          options: ["Bintang raksasa", "Lubang hitam supermasif di pusatnya", "Supernova", "Kumpulan galaksi"],
+          correct: 1
+        },
+        {
+          question: "Berapa luminositas 3C 273 dibanding Matahari?",
+          options: ["100 kali", "1.000 kali", "1 juta kali", "4 triliun kali"],
+          correct: 3
+        }
+      ],
+      proxima: [
+        {
+          question: "Berapa jarak Proxima Centauri b dari Bumi?",
+          options: ["1 tahun cahaya", "4,24 tahun cahaya (exoplanet terdekat)", "10 tahun cahaya", "100 tahun cahaya"],
+          correct: 1
+        },
+        {
+          question: "Berapa lama Proxima b mengorbit bintangnya?",
+          options: ["1 hari", "11,2 hari", "365 hari", "10 tahun"],
+          correct: 1
+        },
+        {
+          question: "Apakah Proxima b berada di zona layak huni?",
+          options: ["Ya, di zona layak huni", "Tidak, terlalu panas", "Tidak, terlalu dingin", "Tidak diketahui"],
+          correct: 0
+        }
+      ]
+    };
+
+    let currentQuiz = null;
+    let currentQuestionIndex = 0;
+    let quizScore = 0;
+    let userAnswers = [];
+
+    function startQuiz(objectId) {
+      const quiz = quizData[objectId];
+      if (!quiz) {
+        return;
+      }
+
+      currentQuiz = quiz;
+      currentQuestionIndex = 0;
+      quizScore = 0;
+      userAnswers = [];
+
+      showQuizQuestion();
+    }
+
+    function showQuizQuestion() {
+      if (currentQuestionIndex >= currentQuiz.length) {
+        showQuizResult();
+        return;
+      }
+
+      const question = currentQuiz[currentQuestionIndex];
+      const contentDiv = document.getElementById('quizContent');
+      const progressDiv = document.getElementById('quizProgress');
+
+      progressDiv.textContent = `Pertanyaan ${currentQuestionIndex + 1} dari ${currentQuiz.length}`;
+
+      contentDiv.innerHTML = `
+        <div class="question-card">
+          <div class="question-text">${question.question}</div>
+          <ul class="options-list" id="optionsList">
+            ${question.options.map((option, index) => `
+              <li class="option-item" data-index="${index}">${option}</li>
+            `).join('')}
+          </ul>
+        </div>
+      `;
+
+      const actionsDiv = document.getElementById('quizActions');
+      actionsDiv.innerHTML = '';
+
+      document.querySelectorAll('.option-item').forEach(item => {
+        item.addEventListener('click', () => {
+          document.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('selected'));
+          item.classList.add('selected');
+
+          const selectedIndex = parseInt(item.dataset.index);
+          
+          actionsDiv.innerHTML = `
+            <button class="btn" id="submitAnswerBtn">Jawab</button>
+          `;
+
+          document.getElementById('submitAnswerBtn').addEventListener('click', () => {
+            checkAnswer(selectedIndex);
+          });
+        });
+      });
+    }
+
+    function checkAnswer(selectedIndex) {
+      const question = currentQuiz[currentQuestionIndex];
+      const isCorrect = selectedIndex === question.correct;
+
+      if (isCorrect) {
+        quizScore++;
+      }
+
+      userAnswers.push({
+        question: question.question,
+        selected: selectedIndex,
+        correct: question.correct,
+        isCorrect: isCorrect
+      });
+
+      document.querySelectorAll('.option-item').forEach((item, index) => {
+        item.style.pointerEvents = 'none';
+        if (index === question.correct) {
+          item.classList.add('correct');
+        } else if (index === selectedIndex && !isCorrect) {
+          item.classList.add('incorrect');
+        }
+      });
+
+      const actionsDiv = document.getElementById('quizActions');
+      const explanationText = question.explanation || (isCorrect ? '✅ Jawaban Anda benar!' : `❌ Jawaban yang benar adalah: ${question.options[question.correct]}`);
+      
+      actionsDiv.innerHTML = `
+        <div style="text-align: center; margin-bottom: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 10px;">
+          <p style="color: ${isCorrect ? '#4ade80' : '#ef4444'}; font-size: 1.1rem; margin-bottom: 0.5rem;">
+            ${isCorrect ? '✅ Benar!' : '❌ Salah'}
+          </p>
+          <p style="color: #b8b8d4; font-size: 0.95rem;">${explanationText}</p>
+        </div>
+        <button class="btn" id="nextQuestionBtn">
+          ${currentQuestionIndex < currentQuiz.length - 1 ? 'Pertanyaan Selanjutnya' : 'Lihat Hasil'}
+        </button>
+      `;
+
+      document.getElementById('nextQuestionBtn').addEventListener('click', () => {
+        currentQuestionIndex++;
+        showQuizQuestion();
+      });
+    }
+
+    function showQuizResult() {
+      const contentDiv = document.getElementById('quizContent');
+      const progressDiv = document.getElementById('quizProgress');
+      const percentage = Math.round((quizScore / currentQuiz.length) * 100);
+
+      progressDiv.textContent = 'Kuis Selesai!';
+
+      let message = '';
+      let earnedCoins = 0;
+
+      if (percentage === 100) {
+        message = 'Sempurna! 🎉 Anda menguasai materi ini!';
+        earnedCoins = 30;
+      } else if (percentage >= 66) {
+        message = 'Bagus! 👏 Pemahaman Anda sangat baik!';
+        earnedCoins = 20;
+      } else if (percentage >= 33) {
+        message = 'Cukup baik! 😊 Terus belajar ya!';
+        earnedCoins = 10;
+      } else {
+        message = 'Jangan menyerah! 💪 Coba pelajari lagi materinya.';
+        earnedCoins = 5;
+      }
+
+      userData.coins += earnedCoins;
+      document.getElementById('headerCoins').textContent = `💰 ${userData.coins} koin`;
+
+      contentDiv.innerHTML = `
+        <div class="quiz-result">
+          <div class="result-score">${quizScore} / ${currentQuiz.length}</div>
+          <div class="result-message">${message}</div>
+          <p style="color: #ffd700; font-size: 1.2rem; margin-top: 1rem;">+${earnedCoins} koin! 💰</p>
+        </div>
+      `;
+
+      const actionsDiv = document.getElementById('quizActions');
+      actionsDiv.innerHTML = `
+        <button class="btn" id="retryQuizBtn">Ulangi Kuis</button>
+        <button class="btn btn-secondary" id="backToDetailFromQuiz">Kembali ke Detail</button>
+      `;
+
+      document.getElementById('retryQuizBtn').addEventListener('click', () => {
+        startQuiz(currentSubObject);
+      });
+
+      document.getElementById('backToDetailFromQuiz').addEventListener('click', () => {
+        showPage('detailPage');
+      });
+    }
+
+    document.getElementById('backToMainFromBrain').addEventListener('click', () => {
+      showPage('mainMenuPage');
+    });
+
+    document.getElementById('backToBrainTrainer').addEventListener('click', () => {
+      renderBrainTrainer();
+      showPage('brainTrainerPage');
+    });
+
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      document.getElementById('searchContainer').classList.toggle('active');
+    });
+
+    async function onConfigChange(config) {
+      const titleElem = document.getElementById('siteTitle');
+      const welcomeTitleElem = document.getElementById('welcomeTitle');
+      const welcomeSubtitleElem = document.getElementById('welcomeSubtitle');
+
+      if (titleElem) {
+        titleElem.textContent = config.site_title || defaultConfig.site_title;
+      }
+      if (welcomeTitleElem) {
+        welcomeTitleElem.textContent = config.welcome_title || defaultConfig.welcome_title;
+      }
+      if (welcomeSubtitleElem) {
+        welcomeSubtitleElem.textContent = config.welcome_subtitle || defaultConfig.welcome_subtitle;
+      }
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig: defaultConfig,
+        onConfigChange: onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["site_title", config.site_title || defaultConfig.site_title],
+          ["welcome_title", config.welcome_title || defaultConfig.welcome_title],
+          ["welcome_subtitle", config.welcome_subtitle || defaultConfig.welcome_subtitle]
+        ])
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a0d50327378b5a6',t:'MTc2MzUzMDIwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
